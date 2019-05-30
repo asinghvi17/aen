@@ -7,3 +7,4 @@
 *.synctex.gz(buzy)
 *.out
 ~$*
+Manifest.toml # local dev paths
