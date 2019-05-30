@@ -1,8 +1,3 @@
-data
-videos
-plots
-notebooks
-_research
 *.pdf
 *.aux
 *.bbl
