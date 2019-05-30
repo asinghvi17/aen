@@ -1,0 +1,65 @@
+\RequirePackage{luatex85}
+
+\documentclass[tikz]{standalone}
+
+\usepackage[siunitx]{circuitikzgit}
+
+\ctikzset{bipoles/length=1cm}
+
+\usetikzlibrary{calc, arrows.meta}
+
+% \tikzset{
+%   neuron/.style={
+%     % The shape:
+%     circle,
+%     % The size:
+%     minimum size=6mm,
+%     % The border:
+%     very thick,
+%     draw=blue!50!black!50,
+%         % The filling:
+%     top color=white,
+%     bottom color=blue!50!black!20, % and something else at the bottom
+%     % Font
+%     font=\itshape,
+%     % padding around node
+%     % outer sep=2mm
+%   }
+% }
+
+
+\begin{document}
+
+\begin{tikzpicture}
+
+  \draw (0, 0) coordinate (upper) to [capacitor, a=$C_1$] (0, -4) coordinate (lower);
+
+  \draw [draw=magenta, very thick] (upper) -- ++(5, 0) coordinate (bus 1 upper) node [midway, above] {$V$};
+
+  \draw [draw=blue, very thick] (lower) -- (lower -| bus 1 upper) coordinate (bus 1 lower);
+
+  \node at (bus 1 upper) [anchor = south, align = left] {Na$^+$\\current};
+
+  % \node at (lower) [sground] {};
+
+  \node [above, align=left] at (0, 0) {Membrane\\capacitance}; % TODO improve spacing
+
+  \draw (bus 1 upper) to [empty tunnel diode, name = nonlin] (bus 1 lower);
+  \node [align = left, anchor=west] at ($(nonlin.east) + (0.3, 0)$) {Nonlinear\\current\\device};
+
+  \draw [draw=magenta, very thick] (bus 1 upper) -- ++(5, 0) coordinate (bus 2 upper);
+  \draw [draw=blue, very thick]    (bus 1 lower) -- ++(5, 0) coordinate (bus 2 lower);
+
+  \node at (bus 2 upper) [anchor = south, align = left] {K$^+$\\current};
+
+  \draw (bus 2 upper) to [resistor, a = $R_1$] ($(bus 2 upper)!0.33!(bus 2 lower)$)
+  to [inductor, a = $L$, name = ind] ($(bus 2 upper)!0.66!(bus 2 lower)$)
+  to [battery, name = vs] (bus 2 lower);
+
+  \node [right, align = left] at ($(ind.east) + (0.2, 0.2)$) {Actual\\inductor};
+
+  \node [right, align=right, anchor = west] at (vs.east) {Bias\\voltage};
+
+\end{tikzpicture}
+
+\end{document}

@@ -1,10 +1,17 @@
-*.pdf
+# LaTeX things
 *.aux
 *.bbl
 *.blg
 *.log
 *.synctex.gz
-*.synctex.gz(buzy)
+*.synctex.gz(busy)
 *.out
+*.bcf
+*.fls
+*.fdb_latexmk
+*.run.xml
+# Word things (why?)
 ~$*
+# ExFAT things
+**/._*
 Manifest.toml # local dev paths

@@ -1,0 +1,52 @@
+\RequirePackage{luatex85}
+\documentclass[tikz]{standalone}
+
+\usepackage{pgfplots, pgffor}
+
+\usepackage{etoolbox}
+
+\usepgfplotslibrary{groupplots}
+
+\pgfplotsset{compat=1.16}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \begin{groupplot}[
+    group style={group size = 4 by 2},
+    xtick = \empty,
+    ytick = \empty,
+    ]
+
+    \def\myPlots{}
+
+      \pgfplotsforeachungrouped  \i in {8012, 8024, ..., 8096} {
+        \eappto\myPlots{%
+
+        \noexpand \nextgroupplot[
+          xtick = \empty,
+          ytick = \empty,
+          title = {$t = \i$},
+          axis line style={draw=none},
+          tick style = {draw = none, opacity = 0},
+          tick label style = {draw = none, opacity = 0},
+          height = 3.5cm,
+          width = 6cm,
+          ]
+
+          \noexpand \addplot [
+          blue,
+          very thick,
+          smooth,
+          mark=*
+          ] table [col sep = comma] {CSVworms/worm-\i.csv};
+        }
+
+      }
+
+      \myPlots
+  \end{groupplot}
+\end{tikzpicture}
+
+
+\end{document}

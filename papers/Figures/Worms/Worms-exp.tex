@@ -1,0 +1,36 @@
+\RequirePackage{luatex85}
+\documentclass[tikz]{standalone}
+
+\usepackage{pgfplots, pgffor}
+
+\pgfplotsset{compat=1.16}
+
+\begin{document}
+
+\foreach \i in {8000, 8012, ..., 8108} {
+
+  \begin{tikzpicture}
+
+    \begin{axis}[
+      xtick = \empty,
+      ytick = \empty,
+      title = {$t = \i$},
+      axis line style={draw=none},
+      height = 9cm,
+      width = 16cm
+      ]
+
+      \addplot [
+      blue,
+      very thick,
+      smooth,
+      mark=*
+      ] table [col sep = comma] {CSVworms/worm-\i.csv};
+
+    \end{axis}
+
+  \end{tikzpicture}
+
+}
+
+\end{document}

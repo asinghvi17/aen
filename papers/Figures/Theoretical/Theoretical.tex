@@ -1,0 +1,50 @@
+\RequirePackage{luatex85}
+
+\documentclass{standalone}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+
+\begin{document}
+
+\begin{tikzpicture}[baseline]
+
+  \begin{axis}[
+    % legend pos = outer north east,
+    % legend entries = {$V_0$, $V_1$},
+    xlabel = {$t$ (arbitrary)},
+    ylabel = $v$,
+    xtick=\empty,
+    % title = {Single diffusive coupling of neuron 0 to neuron 1},
+    title = {Head oscillator (positive coupling)},
+    % grid=major,
+    ]
+
+    \addplot [no marks, very thick, blue] table [x = t, y = v0] {single.dat};
+    \addplot [no marks, very thick, red] table [x = t, y = v1] {single.dat};
+
+  \end{axis}
+
+\end{tikzpicture}
+
+\begin{tikzpicture}[baseline]
+
+  \begin{axis}[
+    legend pos = outer north east,
+    legend entries = {$V_0$, $V_1$},
+    xlabel = {$t$ (arbitrary)},
+    % ylabel = $V$,
+    xtick=\empty,
+    % title = {Double diffusive coupling between neurons},
+    title = {Descending pathway (negative coupling)}
+    % grid=major,
+    ]
+
+    \addplot [no marks, very thick, blue] table [x = t, y = v0] {double.dat};
+    \addplot [no marks, very thick, red] table [x = t, y = v1] {double.dat};
+
+  \end{axis}
+
+\end{tikzpicture}
+
+\end{document}
