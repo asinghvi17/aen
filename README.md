@@ -38,3 +38,7 @@ aen          <- Project's main folder.
 └── Project.toml     <- Main Julia project file, allows activation and installation.
                         Includes DrWatson by default.
 ```
+
+# Making changes
+
+If you want to make a change to a file, please branch out from `master` and submit a pull request.  Since this is a shared repo, the recommended naming scheme or a branch is `<initials>/<short-description>`.  An example is `as/depwarns`.
