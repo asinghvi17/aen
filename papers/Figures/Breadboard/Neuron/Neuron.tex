@@ -1,0 +1,223 @@
+\RequirePackage{luatex85}
+
+\documentclass[tikz]{standalone}
+
+\usepackage[siunitx]{circuitikzgit}
+
+\usepackage{xcolor}
+
+\usetikzlibrary{calc, arrows.meta, backgrounds}
+
+\tikzset{
+  open socket/.style = {
+    circle,
+    fill = lightgray,
+    inner sep = 1pt
+  },
+  filled socket/.style = {
+    circle,
+    fill = black,
+    inner sep = 1pt
+  }
+}
+
+% work with dipchips as well
+\makeatletter\newlength{\Rlen}\setlength{\Rlen}{\pgf@circ@Rlen}\makeatother
+\ctikzset{multipoles/dipchip/pin spacing=1}
+\ctikzset{multipoles/external pins width=0.5}
+\ctikzset{multipoles/dipchip/width=1}
+
+\begin{document}
+
+\begin{tikzpicture}[
+    x=\Rlen,
+    y=\Rlen,
+  ]
+
+  %% draw breadboard sections
+  \foreach \y [evaluate = \y as \line using int(abs(\y))] in {0, ..., -13}{
+
+    % draw line numbers off to the left
+    \node [text=gray] at (-9, \y) {\line};
+    \node [text=gray] at (9, \y) {\line};
+
+    % draw bus and breadboard grid sockets
+    \foreach \lab/\x in {l-/-8, lg/-7, A/-5, B/-4, C/-3, D/-2, E/-1, F/1, G/2, H/3, I/4, J/5, rg/7, r+/8} {
+      \coordinate [open socket] (\lab\line) at (\x, \y);
+    }
+
+    % draw row connectivity for board proper
+    \draw [lightgray, opacity = 0.2, very thick]
+      (-5, \y) -- (-1, \y)
+      (1, \y)  -- (5, \y);
+
+  }
+
+  % label breadboard columns
+
+  \foreach \lab/\x in {A/-5, B/-4, C/-3, D/-2, E/-1, F/1, G/2, H/3, I/4, J/5} {
+    \node [above of = \lab0] {\lab};
+  }
+
+  % label buses
+
+  \node [above of=l-0] {V$_{-}$};
+  \node [above of=lg0] {GND$_{}$};
+  \node [above of=rg0] {GND$_{}$};
+  \node [above of=r+0] {V$_{+}$};
+
+  % draw bus connection lines
+  \begin{scope} [
+      on background layer  % these paths should not interfere with anything else
+    ]
+    \draw [very thick, red,  opacity = 0.2] (l-0) -- (l-13);
+    \draw [very thick, blue, opacity = 0.2] (lg0) -- (lg13);
+
+    \draw [very thick, blue, opacity = 0.2] (rg0) -- (rg13);
+    \draw [very thick, red,  opacity = 0.2] (r+0) -- (r+13);
+  \end{scope}
+
+  %% We're done with the breadboard!
+  %% Now, we need to draw the actual circuit :P
+
+  % Now, I place the op amp:
+
+  \node at (E1) (081) [
+                        dipchip,
+                        fill = cyan!20!white,
+                        % circuitikz/multipoles/dipchip/pin spacing = 0.711,
+                        % circuitikz/multipoles/dipchip/width = 1.03,
+                        anchor = pin 1,
+                        num pins = 8,
+                        hide numbers
+                    ] {TL081};
+
+  % and fill its pins with tiny descriptions:
+
+  \node [right, font=\tiny] at (081.bpin 1) {ON1};
+  \node [right, font=\tiny] at (081.bpin 2) {IN-};
+  \node [right, font=\tiny] at (081.bpin 3) {IN+};
+  \node [right, font=\tiny] at (081.bpin 4) {$V_-$};
+
+  \node [left,  font=\tiny] at (081.bpin 5) {ON2};
+  \node [left,  font=\tiny] at (081.bpin 6) {OUT};
+  \node [left,  font=\tiny] at (081.bpin 7) {$V_+$};
+  \node [left,  font=\tiny] at (081.bpin 8) {NC};
+
+  \foreach \i in {1, 2, ..., 8} {
+    \node at (081.pin \i) [filled socket] {};
+  }
+
+  % Having placed the op amp, it now needs to be connected to voltage rails...
+
+  \draw [yellow, thick] (l-4) coordinate [filled socket] () -- (A4) coordinate [filled socket] ();
+  \draw [red,    thick] (r+2) coordinate [filled socket] () -- (J2) coordinate [filled socket] ();
+
+  % Placing the voltage divider is a bit involved:
+
+  \draw (lg2) to [R, l = $R_1$, a = 100<\kilo\ohm>, *-*] (B2);
+
+  % I've taken a more circuituous route for this resistor, so that
+  % it doesn't interfere with the op-amp to be placed there.
+  \draw (D2) to ($(E0) + (0, 0.2)$) to [R, l = $R_1$, a = 100<\kilo\ohm>] ($(F0) + (0, 0.2)$) to (G2);
+  % Because the path isn't direct, we need to set the black dots that
+  % indicate connection points to the breadboard manually.
+  \node [filled socket] at (D2) {};
+  \node [filled socket] at (G2) {};
+
+  % Having finished the voltage divider, it's important to indicate where signal lives:
+
+  \coordinate [circle, fill = green!50!black, inner sep = 2pt] (signal) at (C2);
+  \node at (signal) [below] {signal};
+
+  % This concludes the ``nonlinear current device''.
+
+  % Now, we construct the simulated inductor
+
+  % beginning with the ``V-bus''.
+
+  \draw [blue, thick] (B3) coordinate [filled socket] -- (B5) coordinate [filled socket];
+
+  % and the bridge between the two sides of the breadboard.
+
+  \draw [thick] (E5) coordinate [filled socket] -- (F5) coordinate [filled socket];
+
+  % I now draw the membrane capacitor:
+
+  \draw (lg5) to [C, l=$C_1$, a = 0.01<\micro\farad>, *-*] (A5);
+
+  % and the bridging resistor to the V-bus:
+
+  \draw (I3) to [R, l = $R_2$, a = 220<\kilo\ohm>, *-*] (I5);
+
+  % Before any connectivity to it is established, I'll draw the second op amp (a dual one):
+
+  \node at (E6) (082) [
+                        dipchip,
+                        fill = cyan!20!white,
+                        % circuitikz/multipoles/dipchip/pin spacing = 0.711,
+                        % circuitikz/multipoles/dipchip/width = 1.03,
+                        anchor = pin 1,
+                        num pins = 8,
+                        hide numbers
+                    ] {TL082};
+
+  % and fill its pins with tiny descriptions:
+
+  \node [right, font=\tiny] at (082.bpin 1) {1O};
+  \node [right, font=\tiny] at (082.bpin 2) {1-};
+  \node [right, font=\tiny] at (082.bpin 3) {1+};
+  \node [right, font=\tiny] at (082.bpin 4) {$V_-$};
+
+  \node [left,  font=\tiny] at (082.bpin 5) {2+};
+  \node [left,  font=\tiny] at (082.bpin 6) {2-};
+  \node [left,  font=\tiny] at (082.bpin 7) {2O};
+  \node [left,  font=\tiny] at (082.bpin 8) {$V_+$};
+
+  \foreach \i in {1, 2, ..., 8} {
+    \node at (082.pin \i) [filled socket] {};
+  }
+
+  % This particular op amp has some associated coupling:
+
+  \draw (G7) coordinate [filled socket] -- (G8) coordinate [filled socket];
+
+  \draw (D6) coordinate [filled socket] -- (D7) coordinate [filled socket];
+
+  % On the left of the board, the capacitor-resistor parallel pair live:
+
+  \draw (H5) to [R, l = $R_3$, a = 100<\kilo\ohm>, *-*] (H7);
+  \draw (J5) to [C, l = $C_2$, a = 0.47<\micro\farad>, *-*] (J9);
+
+  % The resistor that connects the non-inverting input of op amp 2 to the output of op amp 1 (the bias voltage)
+  % is a little complicated to draw directly.  Therefore, I'm going to use the same trick I used on the
+  % voltage divider.
+
+  \draw (G9) to ($(F10) - (0, 0.2)$) to [R, l = $R_4$, a = 1000<\kilo\ohm>] ($(E10) - (0, 0.2)$) to (C7);
+
+  \draw (G9) coordinate [filled socket];
+  \draw (C7) coordinate [filled socket];
+
+  % I'm done with the bulk of the circuit!  Now, it's just the potentiometer left.
+
+  \node (pot) at (E12) [european resistors, genericpotentiometershape, fill = cyan!20!white, rotate=90, anchor = wiper] {};
+
+  \draw (pot.wiper) coordinate [filled socket] ();
+
+  \draw (pot.right) -- (pot.right |- E11) -- (E11) coordinate [filled socket];
+
+  \draw (pot.left) -- (pot.left |- E13) -- (E13) coordinate [filled socket];
+
+  \draw [thick] (lg11) coordinate [filled socket] -- (A11) coordinate [filled socket];
+
+  \draw [thick, yellow] (l-13) coordinate [filled socket] -- (A13) coordinate [filled socket];
+
+  \draw (B12) coordinate [filled socket] -- (B8) coordinate [filled socket];
+
+
+  \draw [yellow, thick] (l-9) coordinate [filled socket] () -- (A9) coordinate [filled socket] ();
+  \draw [red,    thick] (r+6) coordinate [filled socket] () -- (J6) coordinate [filled socket] ();z
+
+\end{tikzpicture}
+
+\end{document}
