@@ -2,6 +2,14 @@
 
 This is a project concerning the implementation of biomimetic neurons (of the FitzHugh-Nagumo model) onto analog circuits, with the ultimate goal being to simulate a worm (_C. elegans_).
 
+# Installing dependencies
+
+You will need to have the `Julia` language installed, on version 1.1 or higher.  You can download it at https://julialang.org/downloads/; once you have done that, clone the repo, and run this command in the root directory of the project:
+
+`julia --project -e 'using Pkg; Pkg.resolve()'`
+
+This will install all the Julia package dependencies.
+
 # Project Setup
 ```
 aen          <- Project's main folder.
@@ -38,3 +46,7 @@ aen          <- Project's main folder.
 └── Project.toml     <- Main Julia project file, allows activation and installation.
                         Includes DrWatson by default.
 ```
+
+# Making changes
+
+If you want to make a change to a file, please branch out from `master` and submit a pull request.  Since this is a shared repo, the recommended naming scheme or a branch is `<initials>/<short-description>`.  An example is `as/depwarns`.
