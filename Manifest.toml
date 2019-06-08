@@ -119,7 +119,7 @@ version = "0.5.4"
 
 [[ChaosTools]]
 deps = ["Combinatorics", "DiffEqBase", "Distances", "Distributions", "DynamicalSystemsBase", "ForwardDiff", "LinearAlgebra", "NearestNeighbors", "Random", "Reexport", "Roots", "StaticArrays", "Statistics", "StatsBase"]
-git-tree-sha1 = "0f8ae7b3b8af8587ced220806a07d6b945c726ab"
+path = "/Users/anshul/.julia/dev/ChaosTools"
 uuid = "608a59af-f2a3-5ad4-90b4-758bdf3122a7"
 version = "1.6.1"
 
