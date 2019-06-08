@@ -64,7 +64,7 @@ sol_a = transpose(hcat(sol.(tr)...))
 
 using PGFPlotsX
 
-plot = @pgf Axis(
+plt = @pgf Axis(
         {
         legend_pos = "outer north east",
         xlabel = raw"{$t$ (arbitrary)}",
@@ -98,5 +98,41 @@ plot = @pgf Axis(
     )
 
 # save the plot
-pgfsave(plotsdir() * "sim-single/sim-single.tex", plot)
-pgfsave(plotsdir() * "sim-single/sim-single.pdf", plot)
+pgfsave(plotsdir() * "sim-single/sim-single.tex", plt)
+pgfsave(plotsdir() * "sim-single/sim-single.pdf", plt)
+pgfsave(plotsdir() * "sim-single/sim-single.png", plt)
+
+plt1 = @pgf Axis(
+        {
+        legend_pos = "outer north east",
+        xlabel = raw"{$t$ (arbitrary)}",
+        ylabel = raw"$V$",
+        xtick  = raw"\empty",
+        title = "Non-sinusoidal oscillator"
+        # grid=major,
+        },
+
+        PlotInc(
+            {
+            no_marks,
+            very_thick,
+            blue
+            },
+            Coordinates(tr, sol_a[:, 1])
+        ),
+
+        # LegendEntry(L"V_0")
+
+        # PlotInc(
+        #     {
+        #     no_marks,
+        #     very_thick,
+        #     red
+        #     },
+        #     Coordinates(tr, sol_a[:, 2])
+        # ),
+        #
+        # LegendEntry(L"V_1"),
+    )
+
+pgfsave("giordano.png", plt1)

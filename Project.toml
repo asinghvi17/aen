@@ -2,13 +2,17 @@ name = "aen"
 authors = ["Harold Hastings <hhastings@simons-rock.edu", "Anshul Singhvi <asinghvi17@simons-rock.edu>", "Rifah Tasnim <rtasnim18@simons-rock.edu"]
 
 [deps]
+ChaosTools = "608a59af-f2a3-5ad4-90b4-758bdf3122a7"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
+DynamicalSystems = "61744808-ddfa-5f27-97ff-6e42cc95d634"
+DynamicalSystemsBase = "6e36e845-645a-534a-86f2-f5d4aa5a06b4"
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 GeometryTypes = "4d00f742-c7ba-57c2-abde-4428a4b178cb"
 Hilbert = "5befdd30-5572-5129-8422-0c92d957d47a"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+LombScargle = "fc60dff9-86e7-5f2f-a8a0-edeadbb75bd9"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 NumericalIntegration = "e7bfaba1-d571-5449-8927-abc22e82249b"
 ORCA = "47be7bcc-f1a6-5447-8b36-7eeeff7534fd"
