@@ -1,22 +1,25 @@
 module Network
 
-    using ParameterizedFunctions
+    using LightGraphs, MetaGraphs
 
-    export Neuron
+    struct FormulaSpec
 
-    struct Neuron
-        "The parameters of the neuron"
-        params::Array{<:Real, 1} # g, e, b
+        template::FormulaTemplate
 
-        "Initial values of the neuron"
-        initcond::Array{<:Real, 1} # initial conditions
-
-        "Connection specification (entry is index in array)"
-        connections::Array{Int, 1}
-
-        ""
-        diffusions::Array{<:Real, 1}
+        coupling::CouplingTemplate
 
     end
+
+    struct DESpec
+
+        lhs::Vector{Symbol}
+
+        rhs::Vector{FormulaSpec}
+
+        cvars::Vector{Int}
+
+    end
+
+    macro coupling_def(arg) end
 
 end
