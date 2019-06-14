@@ -1,0 +1,48 @@
+\RequirePackage{luatex85}
+\documentclass[tikz]{standalone}
+
+\usetikzlibrary{mindmap, arrows.meta}
+\begin{document}
+
+\begin{tikzpicture}[
+      mindmap
+  ]
+
+  \begin{scope}[
+      every node/.style={concept, execute at begin node=\hskip0pt},
+      root concept/.append style={concept color=black, fill=white, line width=1ex, text=black, font=\large\scshape},
+      text=white,
+      hilbert/.style={concept color=red,faded/.style={concept color=red!50}},
+      periodogram/.style={concept color=green!50!black,faded/.style={concept color=green!50!black!50}},
+      grow cyclic,
+      level 1/.append style={level distance=4.5cm,sibling angle=90,font=\scshape}, level 2/.append style={level distance=3cm,sibling angle=45,font=\scriptsize}
+  ]
+
+      \node [root concept, align=center] {Period\\Estimation} % root
+        child [periodogram] { node (Periodograms) {Periodograms}
+          child { node (Multitaper) {Multitaper} }
+          child { node (Normal) {Normal} }
+          child { node (Welch) {Welch} }
+          child { node (Bartlett) {Bartlett} }
+          child { node (Lomb-Scargle) {Lomb-Scargle} }
+        }
+        child [hilbert] { node (Hilbert) {Hilbert Transform}
+        };
+  \end{scope}
+
+  \begin{scope}[
+    every node/.style = {annotation},
+    every annotation/.style = {fill=gray!50!white, text width = 14ex}
+    ]
+
+    \node [left] at (Multitaper.west) {Good for noisy/undersampled data,\\averages across many samplings};
+    \node [below] at (Normal.south) {FFT periodogram,\\General purpose\\\textbf{Fast}};
+    \node [right] at (Bartlett.east) {Lower variance,\\Lower resolution};
+    \node [right] at (Lomb-Scargle.east) {Arbitrarily spaced time grid,\\Slow};
+    \node [right] at (Welch.south east) {Bartlett periodogram,\\Overlapping windows};
+
+  \end{scope}
+
+\end{tikzpicture}
+
+\end{document}
