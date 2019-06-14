@@ -1,10 +1,13 @@
-using DynamicalSystems, LaTeXStrings
+using LaTeXStrings
+using DynamicalSystems
 
 sys = Systems.roessler()
 
 T = 100.0
 
 sol = trajectory(sys, T)
+using Plots
+plot(sol)
 
 tr = LinRange(0, T, size(sol, 1))
 
@@ -109,4 +112,5 @@ pds[findmax(pwrs)[2]]
 
 plot_periodogram(ts, sol[:, 1], pds, pwrs)
 
-savefig("plot.png")
+plot(ts, [sol[:, 1], sol[:, 2]])
+sol[:, 1:2] |> Matrix
