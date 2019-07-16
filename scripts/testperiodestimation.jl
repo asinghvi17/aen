@@ -57,6 +57,8 @@ plot_periodogram(tr, sol[:, 1], period(ls), LombScargle.power(ls), pxlim = (0, 1
 
 using DSP
 
+
+
 dsp = periodogram(sol[:, 1];  fs = size(sol, 1)/T)
 
 fr = DSP.Periodograms.freq(dsp)
@@ -68,10 +70,6 @@ pwrs = DSP.Periodograms.power(dsp)
 pds[findmax(pwrs)[2]]
 
 plot_periodogram(tr, sol[:, 1], pds, pwrs)
-
-sgl = 1:100 |> collect
-
-sgl[]
 
 # """
 # """
