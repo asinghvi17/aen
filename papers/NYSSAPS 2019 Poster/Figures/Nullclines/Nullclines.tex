@@ -1,0 +1,60 @@
+\RequirePackage{luatex85}
+
+\documentclass{standalone}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+
+\begin{document}
+
+\begin{tikzpicture}[baseline]
+
+  \begin{axis}[
+    legend style = {at = {(0.5, 1.05)}, anchor = south},
+    legend entries = {
+                      {Nagumo $v$-nullcline},
+                      {Keener $v$-nullcline},
+                      {$w$-nullcline (common)}
+                    },
+    xlabel = {$v$},
+    ylabel = $w$,
+    % xtick=\empty,
+    % ytick = \empty,
+    % title = {Positive diffusive coupling},
+    grid=major,
+    ]
+
+    \addplot gnuplot [
+    no marks,
+    blue,
+    very thick,
+    smooth,
+    domain = -2:2,
+    ] {x - x^3/3 + 0};
+
+    \addplot [
+    no marks,
+    red,
+    very thick,
+    % smooth,
+    % domain = -2:2,
+    ] coordinates {
+    (-2, {-2 - (-2)^3/3})
+    ({-1}, {-1 - (-1)^3/3})
+    ({1}, {1 - 1^3/3})
+    (2, {2 - (2)^3/3})
+    };
+
+    \addplot [
+    no marks,
+    brown,
+    very thick,
+    % domain = -2:2,
+    domain = -1:1,
+    ] {x};
+
+  \end{axis}
+
+\end{tikzpicture}
+
+\end{document}

@@ -1,0 +1,48 @@
+\RequirePackage{luatex85}
+
+\documentclass{standalone}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+
+\begin{document}
+
+\begin{tikzpicture}[baseline]
+
+  \begin{axis}[
+    % legend pos = outer north east,
+    % legend entries = {$V_0$, $V_1$},
+    xlabel = {$t$},
+    ylabel = $V$,
+    % xtick=\empty,
+    % title = {Positive diffusive coupling},
+    grid=major,
+    ]
+
+    \addplot [no marks, very thick, blue, restrict x to domain = 0:1.2] table {ch1_s.dat};
+    \addplot [no marks, very thick, red, restrict x to domain = 0:1.2] table {ch2_s.dat};
+
+  \end{axis}
+
+\end{tikzpicture}
+
+\begin{tikzpicture}[baseline]
+
+  \begin{axis}[
+    legend pos = outer north east,
+    legend entries = {$V_0$, $V_1$},
+    xlabel = {$t$},
+    % ylabel = $V$,
+    % xtick=\empty,
+    % title = {Negative diffusive coupling between neurons},
+    grid=major,
+    ]
+
+    \addplot [no marks, very thick, blue] table  {ch1_d.dat};
+    \addplot [no marks, very thick, red] table {ch2_d.dat};
+
+  \end{axis}
+
+\end{tikzpicture}
+
+\end{document}

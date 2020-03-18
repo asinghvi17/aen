@@ -1,0 +1,110 @@
+\RequirePackage{luatex85}
+
+\documentclass[tikz]{standalone}
+
+\usepackage[siunitx]{circuitikzgit}
+
+\ctikzset{bipoles/length=1cm}
+
+\usetikzlibrary{calc, arrows.meta}
+
+% \tikzset{
+%   neuron/.style={
+%     % The shape:
+%     circle,
+%     % The size:
+%     minimum size=6mm,
+%     % The border:
+%     very thick,
+%     draw=blue!50!black!50,
+%         % The filling:
+%     top color=white,
+%     bottom color=blue!50!black!20, % and something else at the bottom
+%     % Font
+%     font=\itshape,
+%     % padding around node
+%     % outer sep=2mm
+%   }
+% }
+
+
+\begin{document}
+
+\begin{tikzpicture}
+
+  \draw (0, 0) coordinate (upper) to [capacitor, l = 0.01<\micro\farad>, a=$C_1$] (0, -6) coordinate (lower);
+
+  \draw [draw=magenta, very thick] (upper) -- ++(5, 0) coordinate (bus 1 upper) node [midway, above] {$V$};
+
+  \draw [draw=blue, very thick] (lower) -- (lower -| bus 1 upper) coordinate (bus 1 lower);
+
+  \node at (bus 1 upper) [anchor = south, align = left] {Na$^+$\\current};
+
+  \node at (lower) [sground] {};
+
+  \node [above, align=left] at (0, 0) {Membrane\\capacitance}; % TODO improve spacing
+
+  \draw (bus 1 upper) to [resistor, l = 2.2<\kilo\ohm>, a = $R_3$] ++(0, -2) coordinate (u1 out end) to [resistor, l = 100<\kilo\ohm>, a = $R_2$] ++(0, -2) coordinate (u1 - end) to [resistor, l = 100<\kilo\ohm>, a = $R_2$] (bus 1 lower);
+
+  \node [op amp, noinv input up] at ($(u1 out end) - (1.5, 0)$) (u1) {$\scriptscriptstyle U_1$};
+
+  % \draw (u1.up) ++ (0,.25) node[above] {\SI{12}{\volt}} -- (u1.up);
+  % \draw (u1.down) ++ (0,-.25) node[below] {\SI{-12}{\volt}} -- (u1.down);
+
+  \draw (u1.-) to (u1.- |- u1 - end) to (u1 - end);
+  \draw (u1.out) to (u1 out end);
+  \draw (u1.+) to (u1.+ |- bus 1 upper);
+
+  \node at (u1.+) [anchor = east, align = right] {Nonlinear\\current\\device\\{\tiny(Saturates at rails)}};
+
+  \draw [draw=magenta, very thick] (bus 1 upper) -- ++(5, 0) coordinate (bus 2 upper);
+  \draw [draw=blue, very thick] (bus 1 lower) -- ++(5, 0) coordinate (bus 2 lower);
+
+  \node at (bus 2 upper) [anchor = south, align = left] {K$^+$\\current};
+
+  \draw (bus 2 upper) to [resistor, l = 1<\kilo\ohm>, a = $R_1$] ++(0, -1.5) coordinate (u2 out end);
+
+  \node [op amp, noinv input up] at ($(u2 out end) - (1, 0)$) (u2) {$\scriptscriptstyle U_2$};
+
+  \draw (u2.out) -- (u2 out end);
+
+  \draw (u2.+) to ++(-.5, 0) coordinate (u2 + end);
+
+  \draw (u2 + end) to [capacitor, a=0.47<\micro\farad>, l = $C_2$] (u2 + end |- bus 2 upper);
+
+  \draw (u2.-) to ++(0, -.5) coordinate (tmp1) to (tmp1 -| u2 out end) to (u2 out end);
+
+  \coordinate (tmp5) at (u2 + end -| bus 2 lower);
+
+  \draw (u2 + end) to [resistor, l=10<\kilo\ohm>, a = $R_4$] ++(0, -3) to [battery, name = vs] (u2 + end |- bus 2 lower);
+
+  \draw [ultra thick, draw=white] (u2 + end |- bus 2 lower) -- (bus 2 lower);
+
+  % \node [op amp, noinv input up] at ($(tmp2 -| bus 2 upper)!.5!(bus 2 lower -| bus 2 upper) - (1, 0)$) (u3) {$\scriptscriptstyle U_3$};
+  %
+  % \draw (u3.-) to (u3.- |- u3 - couple) to (u3 - couple);
+  %
+  % \draw (u3.out) to (u3.out -| bus 2 upper);
+  %
+  % \coordinate (tmp4) at (bus 2 lower |- bus 2 upper);
+
+  % \draw ($(bus 2 lower)!.585!(tmp4)$) coordinate (upper end) to [potentiometer, n=pot] (bus 2 lower);
+
+  % \draw (u3.+ -| bus 2 lower) node [potentiometershape, rotate=-90, anchor = center] (pot) {};
+  %
+  % \draw (pot.wiper) to (u3.+);
+  %
+  % \draw (pot.e) to (bus 2 lower);
+  %
+  % \draw (pot.w) to ++(0, 0.7) node (vnub) [draw=black, circle, fill=black, inner sep=1] {};
+  %
+  % \node at (vnub.north) [anchor=south] {$\SI{-12}{\volt}$};
+
+
+  \node at ($(u2 out end) + (0.2, 0.5)$) [align=left, right, anchor = north west] {Simulated\\inductor\\{\tiny `anti-integration'}\\{\tiny using RC with opamp}};
+
+  \node at ($(vs.east) + (0.3, 0)$) [align=left, anchor = west] {Bias\\voltage};
+
+\end{tikzpicture}
+
+\end{document}

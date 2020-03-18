@@ -1,0 +1,5 @@
+2 standard HMH neurons running of a dual-supply +-12V rail system.
+
+On the driving neuron, a follower was implemented so the voltage bus (and therefore the op amps) would not be overloaded.  Then the output of the follower was connected to a 10 MOhm resistor, which was bridged to the input of the second neuron.  The supply rails of the driver were also bridged to the follower to ensure they were operating off the same potential difference.
+
+In phase oscillation was observed.  The driver and driven neurons seemed approximately in sync.
