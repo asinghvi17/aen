@@ -1,4 +1,15 @@
 name = "aen"
+uuid = "00000000-1111-2222-3333-444455556666"
 authors = ["Harold Hastings <hhastings@simons-rock.edu", "Anshul Singhvi <asinghvi17@simons-rock.edu>", "Rifah Tasnim <rtasnim18@simons-rock.edu", "Jennifer Magnes", "Susannah Zhang"]
 
 [deps]
+AbstractPlotting = "537997a7-5e4e-5d89-9595-2241ea00577e"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Contour = "d38c429a-6771-53c6-b99e-75d170b6e991"
+DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
+GRMakie = "901f954c-a098-49c8-905f-8488b748c16b"
+IJulia = "7073ff75-c697-5162-941a-fcdaad2a7d2a"
+MakieLayout = "5a521ce4-ebb9-4793-b5b7-b334dfe8393c"
+PGFPlotsX = "8314cec4-20b6-5062-9cdb-752b83310925"
+Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
+RecipePipeline = "01d81517-befc-4cb6-b9ec-a95719d0359c"

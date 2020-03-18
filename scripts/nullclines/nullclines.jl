@@ -4,7 +4,7 @@ import AbstractPlotting: xlims!, ylims!, setlims!
 using GeoMakie
 
 # backend
-using CairoMakie
+# using CairoMakie
 # get a colour palette
 wong = AbstractPlotting.default_palettes.color[]
 
