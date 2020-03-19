@@ -6,7 +6,7 @@ using GeoMakie
 # backend
 # using CairoMakie
 # get a colour palette
-wong = AbstractPlotting.default_palettes.color[]
+wong = AbstractPlotting.wong_colors
 
 # define differential equations
 function morris_lecar(v, w)

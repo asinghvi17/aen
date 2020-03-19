@@ -1,7 +1,7 @@
 using DrWatson
 
+@quickactivate
+
 DrWatson.greet()
 
-# import packages:
-
-using LaTeXStrings
+DrWatson.plotsdir() = joinpath(dirname(@__DIR__), "figures")

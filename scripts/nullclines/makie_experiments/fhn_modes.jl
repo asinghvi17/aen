@@ -41,8 +41,6 @@ axs[2].title = "Oscillatory regime"
 #axs[2].ylabelvisible = false
 axs[2].yaxisposition = :right
 
-# oscillatory
-
 fo = (x...) -> fitzhugh_nagumo(x...; i_ext = 0.5)
 
 iso_vo = isoclines(-2..2, -2..2, fo; ind=1)
