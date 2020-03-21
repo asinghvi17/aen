@@ -1,0 +1,46 @@
+\documentclass[
+    11pt,
+    preprint,
+    author-numerical,
+    aps
+]{revtex4-2}
+
+\input{preamble.tex}
+
+\tikzexternalize
+
+\begin{document}
+
+%==============================================================================%
+%                              Title and abstract                              %
+%==============================================================================%
+
+\title{A minimal reaction-diffusion neural model generates {\emph{C. elegans}} undulation}
+\author{Anshul Singhvi}
+\affiliation{Bard College at Simon's Rock}
+\date{\today}
+\begin{abstract}
+    The small (1 mm) nematode \emph{Caenorhabditis elegans} has become widely used as a model organism; in particular the \emph{C. elegans} connectome has been completely mapped, and \emph{C. elegans} locomotion has been widely studied (c.f. http://www.wormbook.org). We describe a minimal reaction-diffusion model for the \emph{C. elegans} central pattern generator (CPG) (c.f. Xu et al. 2018, Wen et al. 2012). We use simulation methods to show that a small network of FitzHugh (1961)-Nagumo (et al. 1962) neurons (one of the simplest neuronal models) can generate key features of \emph{C. elegans} undulation (c.f. Magnes et al. 2017) and thus locomotion. Compare the neuromechanical model of Izquierdo and Beer (2015). We also investigate dynamics and stability of the model.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}\label{sec: intro}
+
+hello world
+
+\inputtikz{figures/fhn_dynamics/fhn_dynamics}
+
+
+\section{Correspondence}\label{correspondence}
+\makeatletter
+Please direct all correspondence to hhastings@simons-rock.edu,
+jemagnes@vassar.edu, or\\asinghvi17@simons-rock.edu.
+\makeatother
+
+\section{References}
+
+\nocite{*}
+\bibliography{References}
+% \printbibliography[heading=none]
+\end{document}

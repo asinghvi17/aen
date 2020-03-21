@@ -132,3 +132,21 @@ xu_wnull = Polynomials.Poly([0.9380140455857346, 0.0030498536445784227, -6.42406
 # const px = Unit{:px}()
 #
 # 10px # (10, :px)
+
+# wong_palette = RGB[
+#     RGB{N0f8}((( 86, 180, 233) ./ 255)...), # sky blue
+#     RGB{N0f8}(((230, 159,   0) ./ 255)...), # orange
+#     RGB{N0f8}(((  0, 158, 115) ./ 255)...), # blueish green
+#     RGB{N0f8}(((240, 228,  66) ./ 255)...), # yellow
+#     RGB{N0f8}(((  0, 114, 178) ./ 255)...), # blue
+#     RGB{N0f8}(((213,  94,   0) ./ 255)...), # vermillion
+#     RGB{N0f8}(((204, 121, 167) ./ 255)...), # reddish purple
+#     ]
+#
+# function print2int(c::RGB)
+#     r = Int(red(c) * 255)
+#     g = Int(green(c) * 255)
+#     b = Int(blue(c) * 255)
+#
+#     println("{rgb,255:red,$r:green,$g:blue,$b}")
+# end

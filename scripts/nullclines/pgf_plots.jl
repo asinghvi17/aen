@@ -1,5 +1,23 @@
 using PGFPlotsX
 
+push!(
+    PGFPlotsX.CUSTOM_PREAMBLE,
+    """
+    % This cycle list encodes the Wong colors, which are visually distinguishable.
+    % They also account for colorblind support, and as such are optimal for use in a paper.
+    \pgfplotscreateplotcyclelist{wong}{%
+        color={rgb, 255 : red, 86  ; green, 180 ; blue, 233}, mark = *\\         % sky blue
+        color={rgb, 255 : red, 230 ; green, 159 ; blue, 0},   mark = square*\\   % orange
+        color={rgb, 255 : red, 0   ; green, 158 ; blue, 115}, mark = otimes*\\   % blueish green
+        color={rgb, 255 : red, 240 ; green, 228 ; blue, 66},  mark = star\\      % yellow
+        color={rgb, 255 : red, 0   ; green, 114 ; blue, 178}, mark = diamond*\\  % blue
+        color={rgb, 255 : red, 213 ; green, 94  ; blue, 0},   mark = triangle*\\ % vermillion
+        color={rgb, 255 : red, 204 ; green, 121 ; blue, 167}, mark = pentagon*\\ % reddish purple
+    }
+    """
+)
+
+
 ################################################################################
 #                           Fitzhugh-Nagumo dynamics                           #
 ################################################################################
