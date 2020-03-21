@@ -2,8 +2,13 @@
     11pt,
     preprint,
     author-numerical,
-    aps
+    aps,
+    prl, % Physical Review A, the default.
+    natbib,
+    superscriptaddress,
 ]{revtex4-2}
+
+\setcitestyle{authoryear}
 
 \input{preamble.tex}
 
@@ -18,18 +23,48 @@
 \title{A minimal reaction-diffusion neural model generates {\emph{C. elegans}} undulation}
 \author{Anshul Singhvi}
 \affiliation{Bard College at Simon's Rock}
+\author{Harold Hastings}
+\affiliation{Bard College at Simon's Rock}
+\affiliation{Hofstra University}
+\author{Jennifer Magnes}
+\affiliation{Vassar College}
+\author{Cheris Congo}
+\affiliation{Vassar College}
+\author{Miranda Hulsey-Vincent}
+\affiliation{Vassar College}
+\author{Rifah Tasnim}
+\affiliation{Bard College at Simon's Rock}
+\author{Naol Negassa}
+\affiliation{Bard College at Simon's Rock}
 \date{\today}
 \begin{abstract}
-    The small (1 mm) nematode \emph{Caenorhabditis elegans} has become widely used as a model organism; in particular the \emph{C. elegans} connectome has been completely mapped, and \emph{C. elegans} locomotion has been widely studied (c.f. http://www.wormbook.org). We describe a minimal reaction-diffusion model for the \emph{C. elegans} central pattern generator (CPG) (c.f. Xu et al. 2018, Wen et al. 2012). We use simulation methods to show that a small network of FitzHugh (1961)-Nagumo (et al. 1962) neurons (one of the simplest neuronal models) can generate key features of \emph{C. elegans} undulation (c.f. Magnes et al. 2017) and thus locomotion. Compare the neuromechanical model of Izquierdo and Beer (2015). We also investigate dynamics and stability of the model.
+    The small (1 mm) nematode \emph{Caenorhabditis elegans} has become widely used as a model organism; in particular the \emph{C. elegans} connectome has been completely mapped, and \emph{C. elegans} locomotion has been widely studied (c.f. http://www.wormbook.org \citep{corsi2015}). We describe a minimal reaction-diffusion model for the \emph{C. elegans} central pattern generator (CPG) \citep{xu2018,wen2012}. We use simulation methods to show that a small network of \cite{fitzhugh1955}-\cite{nagumo1962} neurons (one of the simplest neuronal models) can generate key features of \emph{C. elegans} undulation \citep[see][]{magnes2012} and thus locomotion. Compare the neuromechanical model of \cite{izquierdo2018}. We also investigate dynamics and stability of the model.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}\label{sec: intro}
 
-hello world
+The small (1 mm) nematode \emph{Caenorhabditis elegans} (\emph{C. elegans}) has become widely used as a model organism \citep{corsi2015}, and has been among the most widely studied biological models of neuronal development, locomotion and the central pattern generator \citep{katz2016}.
+The C. elegans connectome has been completely mapped \citep{jabr} and, as described below, its locomotion has been widely studied.
+``When crawling on a solid surface, the nematode C. elegans moves forward by propagating sinusoidal dorso-ventral retrograde contraction waves. A uniform propagating wave leads to motion that undulates about a straight line.'' \citep{kim2011}.
+A different type of locomotion, often called swimming, occurs when nematodes are submerged in a liquid medium. The nematodes “switch” between these two gaits, under the regulation of particular serotonergic and dopaminergic neurons.
 
-\inputtikz{figures/fhn_dynamics/fhn_dynamics}
+The purpose of this paper to describe a minimal reaction-diffusion model for the C. elegans central pattern generator (CPG) \citep{xu2018, wen2012}. We use simulation methods to show that a small network of \cite{fitzhugh1955}-\cite{nagumo1962} neurons (one of the simplest neuronal models) based on a skeleton model of the C. elegans CPG can reproduce key features of C. elegans undulation \citep{magnes2012} and thus locomotion.
+
+\section{The model central pattern generator}
+
+The central pattern generator is a small neural circuit which regulates the movement of the nematode.  This structure is present in different forms in many different animals, and it regulates many different types of regular movement.
+
+\begin{figure}[h!]
+    \label{fig: xu_cpg}
+    \centering
+    \includegraphics[width=7cm]{figures/xu_cpg/xu_cpg.png}
+    \caption{Pirated from Xu}
+\end{figure}
+
+
+% \inputtikz{figures/fhn_dynamics/fhn_dynamics}
 
 
 \section{Correspondence}\label{correspondence}
