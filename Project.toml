@@ -1,6 +1,12 @@
 name = "aen"
 uuid = "00000000-1111-2222-3333-444455556666"
-authors = ["Harold Hastings <hhastings@simons-rock.edu", "Anshul Singhvi <asinghvi17@simons-rock.edu>", "Rifah Tasnim <rtasnim18@simons-rock.edu", "Jennifer Magnes", "Susannah Zhang"]
+authors = [
+    "Anshul Singhvi <asinghvi17@simons-rock.edu>",
+    "Harold Hastings <hhastings@simons-rock.edu",
+    "Jennifer Magnes <jemagnes@vassar.edu>",
+    "Rifah Tasnim <rtasnim18@simons-rock.edu",
+    "Naol Negassa <nnegassa14@simons-rock.edu",
+]
 
 [deps]
 AbstractPlotting = "537997a7-5e4e-5d89-9595-2241ea00577e"
