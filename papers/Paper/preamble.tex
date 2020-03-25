@@ -167,8 +167,14 @@
 }
 
 %==============================================================================%
-%                          Citations and bibliography                          %
+%                            Neuron diagram macros                             %
 %==============================================================================%
 
-% \usepackage[style=verbose-ibid, backend=bibtex]{biblatex}
-% \addbibresource{References.bib}
+\newcommand{\doublec}[2]{% double diffusion arrows
+  \draw  [-Circle] ($(#1.north east)!0.7!(#1.north)$) -- ($(#2.south east)!0.7!(#2.south)$);
+  \draw  [Circle-] ($(#1.north west)!0.7!(#1.north)$) -- ($(#2.south west)!0.7!(#2.south)$);
+  }
+
+\newcommand{\singlec}[2]{% single diffusion arrows
+  \draw [-Latex] (#1.east) -- (#2.west);
+  }

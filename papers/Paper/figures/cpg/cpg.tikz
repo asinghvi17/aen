@@ -1,11 +1,3 @@
-\newcommand{\dd}[2]{% double diffusion arrows
-  \draw  [-Circle] ($(#1.north east)!0.7!(#1.north)$) -- ($(#2.south east)!0.7!(#2.south)$);
-  \draw  [Circle-] ($(#1.north west)!0.7!(#1.north)$) -- ($(#2.south west)!0.7!(#2.south)$);
-  }
-
-\newcommand{\sd}[2]{% single diffusion arrows
-  \draw [-Latex] (#1.east) -- (#2.west);
-  }
 \begin{tikzpicture}[
   neuron/.style={
     % The shape:
@@ -28,7 +20,7 @@
 
   \node (0d) [neuron, bottom color = red!50!black!20, draw = red!50!black!50] at ($(0, 0)$) {$0_d$};
   \node (0v) [neuron, bottom color = red!50!black!20, draw = red!50!black!50] at ($(0, 2)$) {$0_v$};
-  \dd{0d}{0v};
+  \doublec{0d}{0v};
 
   \draw [decorate, decoration={brace, raise=3pt, mirror}] ($(0d.south west) + (-3mm, 0)$) -- ($(0d.south east) + (3mm, 0)$) node [midway, below=6pt] {Head oscillator};
 
@@ -39,14 +31,14 @@
   {
     \node (\i d) [neuron] at ($(\i*2, 0)$) {$\i_d$};
     \node (\i v) [neuron] at ($(\i*2, 2)$) {$\i_v$};
-    \dd{\i d}{\i v}
+    \doublec{\i d}{\i v}
   }
 
   % loop for 1 way coupling
   \foreach \i/\j in {0/1, 1/2, 2/3}
   {
-    \sd{\i d}{\j d}
-    \sd{\i v}{\j v}
+    \singlec{\i d}{\j d}
+    \singlec{\i v}{\j v}
   }
 
   % draw `To additional neurons'
@@ -55,6 +47,4 @@
 
   \draw [decorate, decoration={brace, mirror, raise=3pt}] ($(1d.south west) + (-3mm + 1, 0)$) -- ($(3d.south east) + (3mm, 0)$) node [midway, below=6pt] {Descending pathway};
 
-
 \end{tikzpicture}
-\end{document}
