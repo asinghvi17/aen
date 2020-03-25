@@ -5,12 +5,11 @@
 \usepackage{authblk}
 
 % \usepackage{natbib}
+% \setcitestyle{nature}
 
 \usepackage[style=nature, natbib]{biblatex}
 
-\setcitestyle{nature}
-
-% \addbibresource{References}
+\addbibresource{References.bib}
 
 \input{preamble.tex}
 
@@ -53,12 +52,13 @@
 
 \section{Introduction}\label{sec: intro}
 
+
 The small (1 mm) nematode \emph{Caenorhabditis elegans} (\emph{C. elegans}) has become widely used as a model organism \citep{corsi2015}, and has been among the most widely studied biological models of neuronal development, locomotion and the central pattern generator \citep{katz2016}.
 The C. elegans connectome has been completely mapped \citep{jabr} and, as described below, its locomotion has been widely studied.
 ``When crawling on a solid surface, the nematode C. elegans moves forward by propagating sinusoidal dorso-ventral retrograde contraction waves. A uniform propagating wave leads to motion that undulates about a straight line.'' \citep{kim2011}.
 A different type of locomotion, often called swimming, occurs when nematodes are submerged in a liquid medium. The nematodes “switch” between these two gaits, under the regulation of particular serotonergic and dopaminergic neurons.
 
-The purpose of this paper to describe a minimal reaction-diffusion model for the C. elegans central pattern generator (CPG) \citep{xu2018, wen2012}. We use simulation methods to show that a small network of \cite{fitzhugh1955}-\cite{nagumo1962} neurons (one of the simplest neuronal models) based on a skeleton model of the C. elegans CPG can reproduce key features of C. elegans undulation \citep{magnes2012} and thus locomotion.
+The purpose of this paper to describe a minimal reaction-diffusion model for the \emph{C. elegans} central pattern generator (CPG) \citep{xu2018, wen2012}. We use simulation methods to show that a small network of \citet{fitzhugh1955}-\citet{nagumo1962} neurons (one of the simplest neuronal models) based on a skeleton model of the C. elegans CPG can reproduce key features of C. elegans undulation \citep{magnes2012} and thus locomotion.
 
 \section{The model central pattern generator}
 
@@ -180,6 +180,6 @@ jemagnes@vassar.edu, or\\asinghvi17@simons-rock.edu.
 \section{References}
 
 % \nocite{*}
-\bibliography{References}
-% \printbibliography[heading=none]
+% \bibliography{References}
+\printbibliography[heading=none]
 \end{document}
