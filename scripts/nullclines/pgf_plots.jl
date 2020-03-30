@@ -183,7 +183,7 @@ fig_cas = @pgf GroupPlot(
         xlabel = "{\$v\$}",
         ylabel = "{\$w\$}",
     },
-    PlotInc({very_thick}, Expression("x - x^3/3")), # FHN v-nullcline
+    PlotInc({very_thick, samples = 300}, Expression("x - x^3/3")), # FHN v-nullcline
     PlotInc({very_thick}, Expression("x")), # common w-nullcline
 
     {
@@ -233,6 +233,6 @@ fig_cas = @pgf GroupPlot(
     PlotInc({very_thick}, Coordinates(anal_single_v1)),
 )
 
-mkpath(joinpath(plotsdir(), "Dynamics", "Nullclines", "anal_sim_comp"))
-pgfsave(joinpath(plotsdir(), "Dynamics", "Nullclines", "anal_sim_comp", "anal_sim_comp.tex"), fig_nc)
-pgfsave(joinpath(plotsdir(), "Dynamics", "Nullclines", "anal_sim_comp", "anal_sim_comp.pdf"), fig_nc)
+mkpath(joinpath(plotsdir(), "Comparisons", "anal_sim_comp"))
+pgfsave(joinpath(plotsdir(), "Comparisons", "anal_sim_comp", "anal_sim_comp.tex"), fig_cas)
+pgfsave(joinpath(plotsdir(), "Comparisons", "anal_sim_comp", "anal_sim_comp.pdf"), fig_cas)
