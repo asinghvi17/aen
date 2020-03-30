@@ -62,20 +62,27 @@ The purpose of this paper to describe a minimal reaction-diffusion model for the
 
 \section{The model central pattern generator}
 
-The central pattern generator is a small neural circuit which regulates the movement of the nematode.  This structure is present in different forms in many animals, and it regulates many types of periodic motion.  \citet{xu2018} proposed an architecture for the CPG of \emph{C. elegans} which is described below in \fref{fig: xu_cpg}.
+% TODO:
+% Grab a source and comment on what happens with multiple gaits
+
+A central pattern generator is a small neural circuit which generates and regulates the movement of complex organisms.  This structure is present in different forms in many animals, and it regulates many types of periodic motion.  \citet{xu2018} proposed an architecture for the CPG of \emph{C. elegans} which is described below in \fref{fig: xu_cpg}.
+
+In more complex animals, like horses or humans, there is only one CPG; the dynamics of the CPG change depending on the gait of the animal.
 
 \begin{figure}[h!]
     \label{fig: xu_cpg}
     \centering
-    \includegraphics[width=7cm]{figures/xu_cpg/xu_cpg.png}
-    \caption{Pirated from Xu}
+    \includegraphics[width=9cm]{figures/xu_cpg/xu_cpg.png}
+    \caption{Pirated from Xu.  }
 \end{figure}
 
-The central pattern generator has two principal components.  First is the \textbf{head oscillator}. Described by \citet{gjorgjieva2014}, the head oscillator consists of two “head neurons” with mutually inhibitory coupling.  Oscillations are generated when this coupling destabilizes an excitable steady state.
+The central pattern generator has two principal components.  First is the \textbf{head oscillator}. As described by \citet{gjorgjieva2014}, the head oscillator consists of two “head neurons” with mutually inhibitory coupling.  Oscillations are generated when this coupling destabilizes an excitable steady state.
 
-Second is the \textbf{descending pathway}, which consists of pairs of coupled dorsal and ventral neurons.  These follow the body of the worm, and are linked to motor neurons and muscles.
+% Driven dissipative system.  Compare to a driven, damped oscillator - the driving force here is the head oscillator, which drives the descending pathway.
 
-While \textit{C. elegans} has twelve pairs of motor neurons, we have only used six pairs in our model.  \fref{fig: cpg} is a depiction of our simplified model as a graph, wherein neurons are nodes, and the arrows between them symbolize connections.
+Second is the \textbf{descending pathway}, which consists of pairs of coupled, excitable, dorsal and ventral neurons.  These follow the body of the worm, and are linked to motor neurons and muscles.
+
+While \textit{C. elegans} has twelve pairs of motor neurons, we have only used six pairs in our model.  \Fref{fig: cpg} is a depiction of our simplified model as a graph, wherein neurons are nodes, and the arrows between them symbolize connections.
 
 \begin{figure}[h!]
     \label{fig: cpg}
@@ -99,7 +106,9 @@ The FHN model consists of two dynamical variables; a fast activator variable $v$
     \end{aligned}
 \end{equation}
 
-In this system, $f(v)$ can be any function which retains the appropriate dynamics.  In our analog implementation, we use a piecewise linear approximation to the cubic, in order to simplify the circuit and avoid using expensive components.
+% The sodium channel has a negative resistance regime, wherein as the voltage increases the current decreases.  Nagumo's tunnel diode describes the same behaviour.  The point is that in the oscillatory regime the system is a relaxation oscillator, and that it has an excitable regime.
+
+In this system, $f(v)$ can be any function which retains the appropriate dynamics, in that it has the same general shape as the cubic $f(v)$.  In our analog implementation, we use a piecewise linear approximation to the cubic, in order to simplify the circuit and avoid using expensive components.
 
 Xu et al. used a simplified two-variable model consisting of a fast, cubic-like activator variable (see the V-nullcline) and a slow, non-linear inhibitor variable (see the n-nullcline). Both the Morris-Lecar model and the Fitzhugh-Nagumo model have similar activator nullclines.
 
@@ -107,13 +116,18 @@ Xu et al. used a simplified two-variable model consisting of a fast, cubic-like 
     \label{fig: nm nullclines}
     \centering
     \inputtikz{figures/neuron_dynamics/neuron_dynamics}
+    % TODO: change legend to dv/dt=0, dw/dt=0
+    % relabel ``real c. elegans'' to C. elegans (experimental data).
+    % for publication: remove ticklabels, keep minor grid
     \caption{Nullclines of several different neuronal models; on the right is the biological model of Xu et al, in the centre is the Morris-Lecar model, and to the right is the FitzHugh-Nagumo model.  These have been arranged in order of decreasing complexity.}
 \end{figure} % TODO: legend
 
 The original system was meant to model one neuron only.  We use diffusion to
 model a synapse. A positive coefficient would simulate a gap junction or
 an excitatory synapse; a negative coefficient would simulate inhibitory
-coupling \citep{collins1994}.
+coupling (\citet{collins1994}).
+
+% TODO: there will be other examples...cf them
 
 The equations, when modified for synaptic connections, look like this:
 
@@ -130,22 +144,26 @@ The equations, when modified for synaptic connections, look like this:
     \label{fig: fhn_dynamics}
     \centering
     \inputtikz{figures/fhn_dynamics/fhn_dynamics}
-    \caption{The nullclines of the FitzHugh-Nagumo neuron.  Nullclines are isoclines where the derivative of a variable is zero.  Here we show an oscillatory mode and an excitable one.}
+    % TODO describe this more.
+    % Show a sample trajectory in each of these.
+    \caption{The nullclines of the FitzHugh-Nagumo neuron.  Nullclines are isoclines where the derivative of a variable is zero.  Here we show an oscillatory mode and an excitable one.  In an oscillating cell, the stable equilibrium is replaced by an unstable equilibrium (open circle) around which it circles indefinitely.  See \citet{parsons2018} for a clear explanation of the dynamics of oscillatory biological systems.}
 \end{figure} % TODO: legend
 
 
 
 \section{Simulation}
 
-The simulation was performed in Python, using the standard SciPy ODE solvers.
+The simulation was performed in Python, using the standard SciPy ODE solvers. % TODO list solver here
 
 \subsection{Methods}
 
 See the appendix, or attached code, for how we simulated this motion.  It should probably also be published on Github - I could make a Jupyter notebook with it.
 
-\subsection{Undulation}
+We realize the network shown in \Fref{fig: cpg} into a system of ODEs, and solve it.  The equations are integrated, giving a timeseries of neuronal potentials.  These are passed through filters to simulate muscular movement and the resistance of the medium.  we used Gaussian smoothing and B-splines for this purpose.
 
-We achieved the undulatory effect by some Gaussian smoothing and B-splines to simulate the effect of real muscles.
+We generated a video by fixing the head of a worm to the origin, and re-normalized the coordinate output of the worm.
+
+We achieved the undulatory effect by some  to simulate the effect of real muscles. % TODO CITEME
 
 \subsection{Comparison to real worm}
 
@@ -157,13 +175,15 @@ While the angle which a worm crawling on agar subtends tends to be oblique, as t
 
 - Nagumo circuit, disadvantages
 
-- Keener improved, op amps, why is that good - scalability, etc
+- Keener improved, op amps, why is that good - scalability, etc. Piecewise (N-shaped) linear approximation.
 
 - Our modifications - diffusion, coupling mechanism.  Some mention of mathematics involved
 
 - Figures: circuits, circuit nullclines,
 
-\section{Comparison of analog and simulation}
+\citet{nagumo1962} proposed a circuit which could simulate the system which FitzHugh proposed.  A depiction is included in \Fref{fig: nagumo_ckt}.
+
+\subsection{Comparison of analog and simulation}
 
 For this section, we will focus on the timeseries output of the neurons, and not on the end worm.  Include the relevant figure here - you can see clearly that the effect is the same.  There are some differences in the waveform because of the different activation function in the circuit (linear interpolation).
 
@@ -171,11 +191,7 @@ For this section, we will focus on the timeseries output of the neurons, and not
 
 Mention the bullet points from the presentation.  How could a system like this be used in applications?  End with some future paths.
 
-\section{Correspondence}\label{correspondence}
-\makeatletter
-Please direct all correspondence to hhastings@simons-rock.edu,
-jemagnes@vassar.edu, or\\asinghvi17@simons-rock.edu.
-\makeatother
+Reference some connections to \citet{adamatzky2008} - the neural system as a computational system.  Also cite similarity between B-Z and FHN.
 
 \section{References}
 

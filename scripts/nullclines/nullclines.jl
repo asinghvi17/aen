@@ -3,6 +3,7 @@ using MakieLayout, Makie
 import AbstractPlotting: xlims!, ylims!, setlims!
 using GeoMakie
 
+using DelimitedFiles
 # backend
 # using CairoMakie
 # get a colour palette
@@ -91,29 +92,29 @@ end
 
 ArrowElement(;kwargs...) = ArrowElement(Attributes(kwargs...))
 
-function MakieLayout.legendsymbol!(scene, element::ArrowElement, bbox, defaultattrs::Attributes)
-    merge!(element.attributes, defaultattrs)
-    attrs = element.attributes
-
-	arrowsize = get(attrs, :arrowsize, lift(x -> x * 3.5, attrs.linewidth))
-
-    fracpoints = attrs.linepoints
-
-    points = @lift(MakieLayout.fractionpoint.(Ref($bbox), $fracpoints))
-
-    origin = @lift([$points[1]])
-	diff_bbox = @lift(diff($points))
-    widths = @lift([$diff_bbox[1] .- Point2f0($arrowsize / 40 * $diff_bbox[1])]) # get the arrow's scale
-
-
-    return arrows!(
-        scene,
-        origin, widths;
-        linecolor = attrs.linecolor, arrowhead = attrs.arrowhead,
-        linestyle = attrs.linestyle, arrowcolor = attrs.arrowcolor,
-        arrowsize = arrowsize, raw = true
-    )[end]
-end
+# function MakieLayout.legendsymbol!(scene, element::ArrowElement, bbox, defaultattrs::Attributes)
+#     merge!(element.attributes, defaultattrs)
+#     attrs = element.attributes
+#
+# 	arrowsize = get(attrs, :arrowsize, lift(x -> x * 3.5, attrs.linewidth))
+#
+#     fracpoints = attrs.linepoints
+#
+#     points = @lift(MakieLayout.fractionpoint.(Ref($bbox), $fracpoints))
+#
+#     origin = @lift([$points[1]])
+# 	diff_bbox = @lift(diff($points))
+#     widths = @lift([$diff_bbox[1] .- Point2f0($arrowsize / 40 * $diff_bbox[1])]) # get the arrow's scale
+#
+#
+#     return arrows!(
+#         scene,
+#         origin, widths;
+#         linecolor = attrs.linecolor, arrowhead = attrs.arrowhead,
+#         linestyle = attrs.linestyle, arrowcolor = attrs.arrowcolor,
+#         arrowsize = arrowsize, raw = true
+#     )[end]
+# end
 
 
 # gather Xu's data
