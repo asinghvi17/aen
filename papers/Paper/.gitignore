@@ -1,6 +1,0 @@
-*.pdf
-!paper.pdf
-!figures/**/*.tikz
-!figures/**/*.pdf
-!figures/**/*.dpth
-!figures/**/*.md5

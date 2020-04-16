@@ -1,0 +1,3 @@
+[submodule "papers/Paper"]
+	path = papers/Paper
+	url = https://github.com/asinghvi17/celegans-model-paper
