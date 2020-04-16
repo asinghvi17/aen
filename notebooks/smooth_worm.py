@@ -22,6 +22,7 @@ from julia import Makie
 from julia import Base
 
 import math
+vent_diff = 0.9
 
 #constants
 
@@ -49,7 +50,6 @@ vx5= 1
 vy5= -0.5
 dx5= 1
 dy5=-0.5
-vent_diff = 0.9
 
 #vector of x and y values as initial conditions
 v=[vx0,vy0,dx0,dy0,vx1,vy1,dx1,dy1,vx2, vy2, dx2, dy2, vx3, vy3, dx3, dy3, vx4, vy4, dx4, dy4, vx5, vy5, dx5, dy5 ]
