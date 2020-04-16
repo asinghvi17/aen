@@ -42,7 +42,12 @@
 
   \draw (inverter.+) to ++(-0.5, 0) node [rotate=0, ground] {};
 
-  \draw (inverter.-) to ++(0, 1) coordinate (inverter end o) to [R, l=10<\kilo\ohm>] (inverter end o -| inverter.out) to (inverter.out) to ++(1, 0) node [neuron] {N1};
+  \draw (inverter.-)
+        to ++(0, 1) coordinate (inverter end o)
+        to [R, l=10<\kilo\ohm>] (inverter end o -| inverter.out)
+        to (inverter.out)
+        to [D] ++(1, 0) 
+        to ++(1, 0) node [neuron] {N1};
 
 \end{tikzpicture}
 

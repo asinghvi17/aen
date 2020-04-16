@@ -34,8 +34,6 @@
 
   \draw (n0.east) to [R, l=100<\kilo\ohm>] (3, 0) coordinate (junction);
 
-  \draw (junction) to [capacitor, l=0.47<\micro\farad>] (3, -1.5) node [ground] {};
-
   \draw (junction) to [diode] (5, 0) node (n1) [right, neuron] {N1};
 
 \end{tikzpicture}
