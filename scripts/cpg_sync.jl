@@ -18,15 +18,14 @@ function construct_params(dinh_ind, dinh_val, dgap_ind, dgap_val)
     es      = fill(0.08,   12)
     bs      = fill(0.47,   12)
     gs      = fill(0.8,    12)
-    Js      = fill(0.5,    12)
+    Js      = fill(0.35,    12)
     Dgaps   = fill(0.005,  12)
     Dinhibs = fill(-0.02,  12)
     Kgaps   = fill(1.0,    12)
     Kinhibs = fill(1.0,    12)
 
     # These have to be special-cased for the head oscillator.
-    Dinhibs[1:2] .= -0.2
-    bs[1:2] .= 0.46
+    Dinhibs[1:2] .= -0.047
 
     # Here, we apply the overrides in the function description.
     Kinhibs[dinh_ind] = dinh_val
@@ -36,17 +35,17 @@ function construct_params(dinh_ind, dinh_val, dgap_ind, dgap_val)
     return ps
 end
 
-ps = construct_parameters(1, 1, 1, 1)
+ps = construct_params(1, 1.0, 1, 1.0)
 # We define the initial conditions
 
 # These are for the head oscillator,
-vent_v0 = -2.0
+vent_v0 = -1.0
 vent_w0 = -0.667
-dors_v0 = -2.0
+dors_v0 = -1.0
 dors_w0 = -0.7
 
 # and these define the descending pathway.
-vent_v1 = -2.0
+vent_v1 = -1.0
 vent_w1 = -0.5
 dors_v1 = -1.0
 dors_w1 = -0.5
@@ -90,11 +89,11 @@ function CPG!(du, u, p, t)
     # First, we handle the head oscillator.
     # first, the ventral side
 
-    du[1] = f(u[1]) - u[2] + Kinhibs[1] * Dinhibs[1] * max(u[3] - u[1], 0)
+    du[1] = f(u[1]) - u[2] + Kinhibs[1] * Dinhibs[1] * max(u[3] - u[1], 0) + Js[1]
 
     du[2] = es[1] * (u[1] - gs[1] * u[2] + bs[1])
 
-    du[3] = f(u[3]) - u[4] + Kinhibs[2] * Dinhibs[2] * max(u[1] - u[2], 0)
+    du[3] = f(u[3]) - u[4] + Kinhibs[2] * Dinhibs[2] * max(u[1] - u[2], 0) + Js[2]
 
     du[4] = es[2] * (u[3] - gs[2] * u[4] + bs[2])
 
@@ -127,7 +126,7 @@ sol = solve(prob; reltol = 1e-5, abstol = 1e-5)
 import Plots
 # This plots all the voltages:
 Plots.plot(sol; vars = 1:2:24)
-
+Plots.plot(sol; vars = 1:2:4)
 # this plots only the ventral voltages
 Plots.plot(sol; vars = 1:4:24, tspan = 1000:2000)
 # and this plots only the dorsal ones.
@@ -154,9 +153,9 @@ params = lift(construct_params, dinh_num.value, dinh_val.value, dgap_num.value, 
 
 oprob = @lift(remake(prob; p = $params))
 
-sol = @lift(solve($oprob))
+t = LinRange(1000, 1750, 1000)
 
-t = @lift $sol.t
+sol = @lift(solve($oprob)(t))
 
 vs = [lift(s -> getindex(s, i, :), sol) for i in 1:2:24]
 
