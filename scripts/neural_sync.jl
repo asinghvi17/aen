@@ -20,18 +20,16 @@ end D Dk g e₀ b₀ e₁ b₁
 
 using MakieLayout
 
-scene, layout = layoutscene()
+oscene, layout = layoutscene()
 
-ax = layout[1, 1] = LAxis(scene)
+ax = layout[1, 1] = LAxis(oscene)
 
 Dkr = LinRange(0, 1, 100)
 
-sl = layout[2, 1] = LSlider(scene; range = Dkr, startvalue = .5)
-Dk = sl.value
+# sl = layout[2, 1] = LSlider(oscene; range = Dkr, startvalue = .5)
+Dk = Observable(1.0)
 
-txt = layout[0, 1] = LText(scene, @lift("Dₙₑₜ = " * string(round(D * $Dk; sigdigits=3))); width = Auto(false), textsize = 30)
-
-scene
+oscene
 
 
 
@@ -49,10 +47,11 @@ b0 = 0
 e1 = 0.04
 b1 = 0.2 # was 0.25
 
+txt = layout[0, 1] = LText(oscene, @lift("Dₙₑₜ = " * string(round(D * $Dk; sigdigits=3))); width = Auto(false), textsize = 30)
 
 p = @lift [D, $Dk, g, e0, b0, e1, b1]
 
-ts = LinRange(001, 750, 10000)
+ts = LinRange(1000, 1750, 10000)
 
 prob = ODEProblem(FHND, u0, (000.0, 2000.0), to_value(p), AutoTsit5(Vern9()))
 
@@ -64,7 +63,6 @@ plot_v1 = @lift $sol[3, :]
 lines!(ax, ts, plot_v0; color=:red)
 lines!(ax, ts, plot_v1; color=:blue)
 
-function CPG!(du, u, p, t)
+record(oscene, "coupling.mp4", LinRange(0, 1, 240)) do i
+    Dk[] = i
 end
-
-scene
