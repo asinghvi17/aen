@@ -1,5 +1,6 @@
 using Polynomials
-using MakieLayout, Makie
+using MakieLayout, Makie, MakieTeX
+using CairoMakie
 import AbstractPlotting: xlims!, ylims!, setlims!
 using GeoMakie
 
@@ -7,7 +8,13 @@ using DelimitedFiles
 # backend
 # using CairoMakie
 # get a colour palette
-wong = AbstractPlotting.wong_colors
+wong = copy(AbstractPlotting.wong_colors)
+begin
+    global wong
+    tmp = wong[1]
+    wong[1] = wong[2]
+    wong[2] = tmp
+end
 
 # define differential equations
 function morris_lecar(v, w)
