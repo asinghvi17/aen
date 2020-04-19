@@ -4,6 +4,7 @@ AbstractPlotting.set_theme!(
     titlegap = 5,
     xgridwidth = 0.5,
     ygridwidth = 0.5,
+    spinewidth = 0.5
 )
 
 const a4_resolution = (595, 842)
@@ -91,16 +92,22 @@ fh_w_null = iso_wosc
 
 scene, layout = layoutscene(
     0;                      # padding
-    resolution = (400, 300) # resolution in points
+    resolution = (250, 150) # resolution in points
 )
 
 axs = layout[1, 1:2] = [
             LAxis(scene;
-                aspect = AxisAspect(1),
+                # aspect = AxisAspect(1),
                 xlabel = "𝑣",
                 ylabel = "𝑤",
                 xlabelpadding = 1,
                 ylabelpadding = 1,
+                titlesize = 11,
+                titlegap = 2,
+                xgridwidth = 0.5,
+                ygridwidth = 0.5,
+                spinewidth = 0.5
+                # autolimitaspect = 1
             )
             for i in 1:2
         ]
@@ -126,13 +133,57 @@ lines!(axs[2], fh_w_null; linewidth = 1, color = wong[2])
 leg = layout[2, 1:2] = LLegend(scene,
                 [xu_v_lines, xu_w_lines],
                 ["𝑑𝑣 = 0", "𝑑𝑤 = 0"];
+                framevisible = false,
+                linewidth = 1,
+                linepoints = Point2f0[(.5, .5), (1, .5)],
+                rowgap = -6,
 )
 
 # The legend doesn't need much space...80 points should be enough.
-rowsize!(layout, 2, 45)
+rowsize!(layout, 2, 30)
+rowgap!(layout, 0)
 
 save(plotsdir("Dynamics/Nullclines/Neuron model nullclines/nm_nullclines_makie.pdf"), scene)
 
 ################################################################################
-#                     Comparison of analog and simulation                      #
+#                         Analog-simulation comparison                         #
 ################################################################################
+
+########################################
+#            Simulated data            #
+########################################
+
+sim_data_single = readdlm(datadir("Oscilloscopy", "Comparison data", "Simulation", "single.dat"); skipstart = 1)
+
+sim_single_v0 = Point2f0.(sim_data_single[:, 1], sim_data_single[:, 2])
+sim_single_v1 = Point2f0.(sim_data_single[:, 1], sim_data_single[:, 3])
+
+sim_data_double = readdlm(datadir("Oscilloscopy", "Comparison data", "Simulation", "double.dat"); skipstart = 1)
+
+sim_double_v0 = Point2f0.(sim_data_double[:, 1], sim_data_double[:, 2])
+sim_double_v1 = Point2f0.(sim_data_double[:, 1], sim_data_double[:, 3])
+
+########################################
+#             Analog data              #
+########################################
+
+anal_single_v0 = Point2f0.(eachcol(readdlm(datadir("Oscilloscopy", "Comparison data", "Analog", "ch1_s.dat"); skipstart = 1))...)
+anal_single_v1 = Point2f0.(eachcol(readdlm(datadir("Oscilloscopy", "Comparison data", "Analog", "ch2_s.dat"); skipstart = 1))...)
+
+anal_double_v0 = Point2f0.(eachcol(readdlm(datadir("Oscilloscopy", "Comparison data", "Analog", "ch1_d.dat"); skipstart = 1))...)
+anal_double_v1 = Point2f0.(eachcol(readdlm(datadir("Oscilloscopy", "Comparison data", "Analog", "ch2_d.dat"); skipstart = 1))...)
+
+########################################
+#              Nullclines              #
+########################################
+
+keener_vnull = Point2f0[ # manually expand linear interp
+    (-2, -2 - (-2)^3/3),
+    (-1, -1 - (-1)^3/3),
+    (1, 1 - 1^3/3),
+    (2, 2 - (2)^3/3),
+]
+
+########################################
+#                Figure                #
+########################################
