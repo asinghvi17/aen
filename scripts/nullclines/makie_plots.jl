@@ -41,7 +41,10 @@ axs = layout[1, 1:2] = [
 hidexdecorations!.(axs); hideydecorations!.(axs)
 setproperty!.(axs, :xlabelvisible, true)
 setproperty!.(axs, :ylabelvisible, true)
+setproperty!.(axs, :spinewidth, true)
+# setproperty!.(axs, :yspinewidth, true)
 axs[2].yaxisposition = :right
+
 # setproperty!.(axs, :titlesize, 12)
 # `axs[1]` is the excitatory axis.
 axs[1].title = "Excitatory mode"
@@ -74,6 +77,9 @@ leg.grid.content[1].content[1, 2] = LTeX(leg.child,
 leg.grid.content[1].content[2, 2] = LTeX(leg.child,
     raw"dw = e \cdot \left(v- g \cdot w + b\right) = 0"
 )
+
+save("neur_dyn_tmp.pdf", scene)
+save("neur_dyn_tmp.png", scene; px_per_unit = 10)
 
 save(plotsdir("Dynamics/Nullclines/FHN_nullclines/fhn_dynamics_makie.pdf"), scene)
 

@@ -4,27 +4,27 @@ using SimpleWeightedGraphs: SimpleWeightedDiGraph, SimpleWeightedEdge
 
 # define the connectome graph
 
-cpg = SimpleWeightedDiGraph(12)
+tng = SimpleWeightedDiGraph(4)
 
-Dinhibs = fill(0.1, 6)
-Dgaps = fill(-0.01, 5)
+Dinhibs = [0.1, 0.05]
+Dgaps = fill(-0.01, 1)
 
 # Add mutual inhibition
-for (ventral, dorsal, Dinhib) in zip(1:6, 7:12, Dinhibs)
+for (ventral, dorsal, Dinhib) in zip(1:2, 3:4, Dinhibs)
     e1 = SimpleWeightedEdge(ventral, dorsal, Dinhib)
     e2 = SimpleWeightedEdge(dorsal, ventral, Dinhib)
-    LightGraphs.add_edge!(cpg, e1)
-    LightGraphs.add_edge!(cpg, e2)
+    LightGraphs.add_edge!(tng, e1)
+    LightGraphs.add_edge!(tng, e2)
 end
 
 # We handle gaps separately, since
 # the head oscillator does not have
 # a forcing neuron pair upstream
-for (ventral, dorsal, Dgap) in zip(2:6, 8:12, Dgaps)
+for (ventral, dorsal, Dgap) in zip(2:2, 4:4, Dgaps)
     e1 = SimpleWeightedEdge(ventral - 1, ventral, Dgap)
     e2 = SimpleWeightedEdge(dorsal - 1, dorsal, Dgap)
-    LightGraphs.add_edge!(cpg, e1)
-    LightGraphs.add_edge!(cpg, e2)
+    LightGraphs.add_edge!(tng, e1)
+    LightGraphs.add_edge!(tng, e2)
 end
 
 # define the unit equation
@@ -43,8 +43,8 @@ fhn = [
 ]
 
 
-function couple(sys_from, sys_to, weight)
-    return [0 ~ sys_from.F - weight * sys_to.v]
+function couple(system_to, systems_from, weights)
+    return [0 ~ system_to.F +  sum(weights .* getproperty.(systems_from, :v))]
 end
 
 # generate a single equation spec from the graph
@@ -57,20 +57,29 @@ systems = [
                 "n" * string(i) # ModelingToolkit.map_subscripts(string(i))
         )
     )
-    for i in vertices(cpg)
+    for i in vertices(tng)
 ]
 
 # populate couplings from edge
 
 couplings = Equation[]
 
-for edge in edges(cpg)
+edgs = edges(tng)
+graph_weights = SparseArrays.SparseMatrixCSC(weights(tng))
+for vertex in vertices(tng)
+    sys_to = systems[vertex]
+    weights = []
+    systems_from = ODESystem[]
+    for neighbor in inneighbors(tng, vertex)
+        push!(systems_from, systems[neighbor])
+        push!(weights, graph_weights[neighbor, vertex])
+    end
     append!(
         couplings,
         couple(
-            systems[src(edge)],
-            systems[dst(edge)],
-            weight(edge)
+            systems[vertex],
+            systems_from,
+            weights
         )
     )
 end
@@ -125,4 +134,7 @@ end
 # Construct the ODEProblem
 
 prob = ODEProblem(connected, u0, (0.0, 2000.0), p0)
-sol = solve(prob, Rodas5())
+sol = solve(prob, Rodas5(); abstol = 1e-6, reltol = 1e-8)
+
+# plot(sol; vars = [1, 4])
+plot(sol; vars = collect(1:3:12), tspan = (750, 1750), lw = .3)
