@@ -6,8 +6,9 @@ using SimpleWeightedGraphs: SimpleWeightedDiGraph, SimpleWeightedEdge
 
 cpg = SimpleWeightedDiGraph(12)
 
-Dinhibs = fill(0.1, 6)
-Dgaps = fill(-0.01, 5)
+Dinhibs = fill(0.05, 6)
+Dinhibs[1] = 0.1 # head oscillator
+Dgaps = fill(-0.05, 5)
 
 # Add mutual inhibition
 for (ventral, dorsal, Dinhib) in zip(1:6, 7:12, Dinhibs)
@@ -43,8 +44,8 @@ fhn = [
 ]
 
 
-function couple(sys_from, sys_to, weight)
-    return [0 ~ sys_from.F - weight * sys_to.v]
+function couple(system_to, systems_from, weights)
+    return [0 ~ system_to.F +  sum(weights .* getproperty.(systems_from, :v))]
 end
 
 # generate a single equation spec from the graph
@@ -64,16 +65,26 @@ systems = [
 
 couplings = Equation[]
 
-for edge in edges(cpg)
+edgs = edges(cpg)
+graph_weights = SparseArrays.SparseMatrixCSC(weights(cpg))
+for vertex in vertices(cpg)
+    sys_to = systems[vertex]
+    weights = []
+    systems_from = ODESystem[]
+    for neighbor in inneighbors(cpg, vertex)
+        push!(systems_from, systems[neighbor])
+        push!(weights, graph_weights[neighbor, vertex])
+    end
     append!(
         couplings,
         couple(
-            systems[src(edge)],
-            systems[dst(edge)],
-            weight(edge)
+            systems[vertex],
+            systems_from,
+            weights
         )
     )
 end
+
 
 connected = ODESystem(
     couplings,
@@ -126,3 +137,10 @@ end
 
 prob = ODEProblem(connected, u0, (0.0, 2000.0), p0)
 sol = solve(prob, Rodas5())
+
+
+Plots.plot(sol; vars = collect(1:3:12), tspan = (1000, 2000))
+
+##
+
+# graphplot(cpg; names = 1:12)
