@@ -1,7 +1,6 @@
 # # An interactive CPG dashboard
 
-using DifferentialEquations,
-      ParameterizedFunctions
+using DifferentialEquations, ImageFiltering, Interpolations
 
 using Makie, Observables
 
@@ -15,18 +14,18 @@ using Makie, Observables
 # - The head oscillator does not use `Dgap` or `Kgap`; other than that, it's a normal neuron.
 
 function construct_params(dinh_ind, dinh_val, dgap_ind, dgap_val)
-    es      = fill(0.08,   12)
+    es      = fill(0.04,   12)
     bs      = fill(0.47,   12)
     gs      = fill(0.8,    12)
-    Js      = fill(0.35,    12)
-    Dgaps   = fill(0.05,  12)
+    Js      = fill(0.0,    12)
+    Dgaps   = fill(0.05,   12)
     Dinhibs = fill(-0.02,  12)
     Kgaps   = fill(1.0,    12)
     Kinhibs = fill(1.0,    12)
 
     # These have to be special-cased for the head oscillator.
-    Dinhibs[1:2] .= -0.047
-    Js[3:end] .= 0.1
+    Dinhibs[1:2] .= -0.1
+    # Js[3:end] .= 0.1
 
     # Here, we apply the overrides in the function description.
     Kinhibs[dinh_ind] = dinh_val
@@ -69,10 +68,10 @@ dors_w5 = -0.5
 
 u0 = [vent_v0,vent_w0,dors_v0,dors_w0,vent_v1,vent_w1,dors_v1,dors_w1,vent_v2, vent_w2, dors_v2, dors_w2, vent_v3, vent_w3, dors_v3, dors_w3, vent_v4, vent_w4, dors_v4, dors_w4, vent_v5, vent_w5, dors_v5, dors_w5 ]
 
-tspan = (0.0, 2000.0)
+tspan = (0.0, 3000.0)
 # ## Core function
 
-f(v) = min(max(-2 - v, v), 2 - v)
+f(v) = v - v^3 / 3 # min(max(-2 - v, v), 2 - v)
 
 function CPG!(du, u, p, t)
 
@@ -90,11 +89,11 @@ function CPG!(du, u, p, t)
     # First, we handle the head oscillator.
     # first, the ventral side
 
-    du[1] = f(u[1]) - u[2] + Kinhibs[1] * Dinhibs[1] * max(u[3] - u[1], 0) + Js[1]
+    du[1] = f(u[1]) - u[2] + Kinhibs[1] * Dinhibs[1] * u[3] + Js[1]
 
     du[2] = es[1] * (u[1] - gs[1] * u[2] + bs[1])
 
-    du[3] = f(u[3]) - u[4] + Kinhibs[2] * Dinhibs[2] * max(u[1] - u[2], 0) + Js[2]
+    du[3] = f(u[3]) - u[4] + Kinhibs[2] * Dinhibs[2] * u[1] + Js[2]
 
     du[4] = es[2] * (u[3] - gs[2] * u[4] + bs[2])
 
@@ -109,7 +108,7 @@ function CPG!(du, u, p, t)
         pre_v = u[nn - 4] # voltage of the neuron to the left (which drives it through a gap jcn)
         opp_v = u[nn - 2] # voltage of the neuron opposite (mutual inhibitory coupling)
 
-        du[nn] = f(v) - w + Kinhibs[i] * Dinhibs[i] * max(opp_v - v, 0) + Kgaps[i] * Dgaps[i] * max(pre_v - v, 0) + Js[i]
+        du[nn] = f(v) - w + Kinhibs[i] * Dinhibs[i] * opp_v + Kgaps[i] * Dgaps[i] * max(pre_v - v, 0) + Js[i]
 
         du[nn + 1] = es[i] * (v - gs[i] * w + bs[i])
 
@@ -125,7 +124,7 @@ sol = solve(prob; reltol = 1e-5, abstol = 1e-5)
 # We've solved the equation; now we need plots.
 import Plots
 # This plots all the voltages:
-Plots.plot(sol; vars = 1:2:24)
+Plots.plot(sol; vars = 1:2:24, tspan = (1000, 1600), palette = p)
 Plots.plot(sol; vars = 1:2:4)
 # this plots only the ventral voltages
 Plots.plot(sol; vars = 1:4:24, tspan = 1000:2000)
@@ -133,7 +132,87 @@ Plots.plot(sol; vars = 1:4:24, tspan = 1000:2000)
 Plots.plot(sol; vars = 3:4:24, tspan = 1000:2000)
 
 neuron_range = 1:12
-# kint_range =
+
+function eff_signal(
+        sol;
+        σ = 40,
+        kernel = reflect(ImageFiltering.Kernel.gaussian((σ,), (σ * 4 * 2 + 1,))),
+        trange = (0, 2000),
+        n_samples = 20_000
+    )
+
+    num_neurons = size(sol, 1) ÷ 2 # 2 eqs/neuron
+    num_pairs   = num_neurons  ÷ 2 # 2 neurons per pair
+
+    ts = sol(LinRange(trange..., n_samples))
+
+    effective_signal = zeros(n_samples, num_pairs)
+
+    for nn in 1:num_pairs
+        neuron_number = nn - 1 # offset for indexing
+        effective_signal[:, nn]  = (ts[4*neuron_number + 1, :]  .+ abs.(ts[4*neuron_number + 1, :])) ./ 2
+        effective_signal[:, nn] -=(ts[4*neuron_number+2 + 1, :] .+ abs.(ts[4*neuron_number+2 + 1, :])) ./ 2
+        effective_signal[:, nn]  = imfilter(effective_signal[:, nn], kernel)
+    end
+
+    return effective_signal
+end
+
+signal = eff_signal(sol; σ = 40)
+
+function signal_to_smooth(
+        Δθ::AbstractVector;
+        tightness_of_bend = 0.5,
+    )
+
+    xpos = 0
+    ypos = 0
+
+    xcoords = Float64[xpos]
+    ycoords = Float64[ypos]
+
+    θ = 0
+
+    number_of_joints = length(Δθ)
+
+    for j in 1:number_of_joints
+        δθ = Δθ[j]
+        θ += tightness_of_bend * δθ
+
+        xpos += cos(θ)
+        ypos += sin(θ)
+        append!(xcoords, xpos)
+        append!(ycoords, ypos)
+    end
+        # print(i,deltatheta, xpos, ypos)
+
+
+    # spline fit
+    nodes=range(0, length = number_of_joints+1)
+
+    csx = CubicSplineInterpolation(nodes,xcoords)
+    csy = CubicSplineInterpolation(nodes,ycoords)
+
+    worm_coords = range(0, stop = number_of_joints, step = 0.01)
+    # I am incrementing the position in steps of
+    # 0.01*(distance between nodes)
+
+    smoothwormx=csx.(worm_coords)
+    smoothwormy=csy.(worm_coords)
+
+    return smoothwormx, smoothwormy
+end
+
+using Makie
+framerate = 1/40
+
+linobs = Node(Point2f0[(0, 0)])
+lines(linobs; limits = Rect(-8, -8, 16, 16), resolution = (1000, 1000), linewidth = 10)
+for i in 8000:8800
+    linobs[] = Point2f0.(signal_to_smooth(signal[i, :])...)
+    sleep(framerate)
+end
+
 # ## Dashboard
 using Makie: lines, scatter
 using MakieLayout
