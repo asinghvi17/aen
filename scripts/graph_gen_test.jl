@@ -1,4 +1,4 @@
-using LightGraphs, SimpleWeightedGraphs, ModelingToolkit, DifferentialEquations, Plots
+using LightGraphs, SimpleWeightedGraphs, SparseArrays, ModelingToolkit, DifferentialEquations, Plots
 using LightGraphs: src, dst, weights
 using SimpleWeightedGraphs: SimpleWeightedDiGraph, SimpleWeightedEdge
 
@@ -63,36 +63,39 @@ systems = [
 
 # populate couplings from edge
 
-couplings = Equation[]
+# couplings = Equation[]
+#
+# edgs = edges(cpg)
+# graph_weights = SparseArrays.SparseMatrixCSC(weights(cpg))
+# for vertex in vertices(cpg)
+#     sys_to = systems[vertex]
+#     weights = []
+#     systems_from = ODESystem[]
+#     for neighbor in inneighbors(cpg, vertex)
+#         push!(systems_from, systems[neighbor])
+#         push!(weights, graph_weights[neighbor, vertex])
+#     end
+#     append!(
+#         couplings,
+#         couple(
+#             systems[vertex],
+#             systems_from,
+#             weights
+#         )
+#     )
+# end
+#
+#
+# connected = ODESystem(
+#     couplings,
+#     t,
+#     [],
+#     [];
+#     systems = systems
+# )
 
-edgs = edges(cpg)
-graph_weights = SparseArrays.SparseMatrixCSC(weights(cpg))
-for vertex in vertices(cpg)
-    sys_to = systems[vertex]
-    weights = []
-    systems_from = ODESystem[]
-    for neighbor in inneighbors(cpg, vertex)
-        push!(systems_from, systems[neighbor])
-        push!(weights, graph_weights[neighbor, vertex])
-    end
-    append!(
-        couplings,
-        couple(
-            systems[vertex],
-            systems_from,
-            weights
-        )
-    )
-end
-
-
-connected = ODESystem(
-    couplings,
-    t,
-    [],
-    [];
-    systems = systems
-)
+include("graph_system_constructor.jl")
+connected = construct_system(systems, cpg, couple)
 
 # Construct the initial condition, special-casing the first
 # 2 neurons which comprise the head oscillator
@@ -138,8 +141,10 @@ end
 prob = ODEProblem(connected, u0, (0.0, 2000.0), p0)
 sol = solve(prob, Rodas5())
 
+p = palette(:diverging_linear_bjr_30_55_c53_n256, 14)[[(1:6)..., (9:14)...]]
 
-Plots.plot(sol; vars = collect(1:3:12), tspan = (1000, 2000))
+
+Plots.plot(sol; vars = collect(1:3:36), tspan = (1600, 2000), palette = p, legend = :outerright)
 
 ##
 
