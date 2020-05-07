@@ -87,12 +87,14 @@ function CPG!(du, u, p, t)
     # Now, we get to the calculations.
 
     # First, we handle the head oscillator.
-    # first, the ventral side
+    # 1 is the ventral neuron,
 
     du[1] = f(u[1]) - u[2] + Kinhibs[1] * Dinhibs[1] * u[3] + Js[1]
 
     du[2] = es[1] * (u[1] - gs[1] * u[2] + bs[1])
 
+    # and 2 is the dorsal neuron.
+    
     du[3] = f(u[3]) - u[4] + Kinhibs[2] * Dinhibs[2] * u[1] + Js[2]
 
     du[4] = es[2] * (u[3] - gs[2] * u[4] + bs[2])
