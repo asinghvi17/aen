@@ -94,7 +94,7 @@ function CPG!(du, u, p, t)
     du[2] = es[1] * (u[1] - gs[1] * u[2] + bs[1])
 
     # and 2 is the dorsal neuron.
-    
+
     du[3] = f(u[3]) - u[4] + Kinhibs[2] * Dinhibs[2] * u[1] + Js[2]
 
     du[4] = es[2] * (u[3] - gs[2] * u[4] + bs[2])
@@ -209,7 +209,7 @@ using Makie
 framerate = 1/40
 
 linobs = Node(Point2f0[(0, 0)])
-lines(linobs; limits = Rect(-8, -8, 16, 16), resolution = (1000, 1000), linewidth = 10)
+sc = lines(linobs; limits = Rect(-8, -8, 16, 16), resolution = (1000, 1000), linewidth = 10)
 for i in 8000:8800
     linobs[] = Point2f0.(signal_to_smooth(signal[i, :])...)
     sleep(framerate)
@@ -323,3 +323,11 @@ lines!(axs[6], vs[12]; color = :red)
 #     seg.color[] = c
 # end
 scene
+
+linobs = Node(Point2f0[(0, 0)])
+
+sc = lines(linobs; limits = Rect(-4, -6, 10, 12), resolution = (750, 900), linewidth = 10, scale_plot = false)
+
+record(sc, "worm.mp4", 8_000:12_000; framerate = 60, sleep = false) do i
+    linobs[] = Point2f0.(signal_to_smooth(signal[i, :])...)
+end
