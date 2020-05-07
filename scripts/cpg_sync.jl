@@ -162,7 +162,11 @@ end
 
 signal = eff_signal(sol; σ = 40)
 
-function signal_to_smooth(
+function rotmat(θ)
+    return AbstractPlotting.Mat2(cos(θ), sin(θ), -sin(θ), cos(θ))
+end
+
+function signal_to_worm(
         Δθ::AbstractVector;
         tightness_of_bend = 0.5,
     )
@@ -187,7 +191,7 @@ function signal_to_smooth(
         append!(ycoords, ypos)
     end
         # print(i,deltatheta, xpos, ypos)
-
+        # @show θ
 
     # spline fit
     nodes=range(0, length = number_of_joints+1)
@@ -202,7 +206,12 @@ function signal_to_smooth(
     smoothwormx=csx.(worm_coords)
     smoothwormy=csy.(worm_coords)
 
-    return smoothwormx, smoothwormy
+    points = Point2f0.(smoothwormx, smoothwormy)
+
+
+    rotation = rotmat(-tightness_of_bend * Δθ[1])
+
+    return Ref(rotation) .* points
 end
 
 using Makie
@@ -211,7 +220,7 @@ framerate = 1/40
 linobs = Node(Point2f0[(0, 0)])
 sc = lines(linobs; limits = Rect(-8, -8, 16, 16), resolution = (1000, 1000), linewidth = 10)
 for i in 8000:8800
-    linobs[] = Point2f0.(signal_to_smooth(signal[i, :])...)
+    linobs[] = signal_to_worm(signal[i, :])
     sleep(framerate)
 end
 
@@ -329,5 +338,5 @@ linobs = Node(Point2f0[(0, 0)])
 sc = lines(linobs; limits = Rect(-4, -6, 10, 12), resolution = (750, 900), linewidth = 10, scale_plot = false)
 
 record(sc, "worm.mp4", 8_000:12_000; framerate = 60, sleep = false) do i
-    linobs[] = Point2f0.(signal_to_smooth(signal[i, :])...)
+    linobs[] = signal_to_worm(signal[i, :])
 end
