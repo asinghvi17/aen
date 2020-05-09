@@ -39,31 +39,31 @@ ps = construct_params(1, 1.0, 1, 1.0)
 # We define the initial conditions
 
 # These are for the head oscillator,
-vent_v0 = -1.0
+vent_v0 = 1.0
 vent_w0 = -0.667
 dors_v0 = -1.0
 dors_w0 = -0.7
 
 # and these define the descending pathway.
-vent_v1 = -1.0
+vent_v1 = 1.0
 vent_w1 = -0.5
-dors_v1 = -1.0
+dors_v1 = 1.0
 dors_w1 = -0.5
-vent_v2 = -1.0
+vent_v2 = 1.0
 vent_w2 = -0.5
-dors_v2 = -1.0
+dors_v2 = 1.0
 dors_w2 = -0.5
-vent_v3 = -1.0
+vent_v3 = 1.0
 vent_w3 = -0.49
-dors_v3 = -1.0
+dors_v3 = 1.0
 dors_w3 = -0.51
-vent_v4 = -1.0
+vent_v4 = 1.0
 vent_w4 = -0.5
-dors_v4 = -1.0
+dors_v4 = 1.0
 dors_w4 = -0.5
-vent_v5 = -1.0
+vent_v5 = 1.0
 vent_w5 = -0.5
-dors_v5 = -1.0
+dors_v5 = 1.0
 dors_w5 = -0.5
 
 u0 = [vent_v0,vent_w0,dors_v0,dors_w0,vent_v1,vent_w1,dors_v1,dors_w1,vent_v2, vent_w2, dors_v2, dors_w2, vent_v3, vent_w3, dors_v3, dors_w3, vent_v4, vent_w4, dors_v4, dors_w4, vent_v5, vent_w5, dors_v5, dors_w5 ]
@@ -139,16 +139,12 @@ function eff_signal(
         sol;
         σ = 40,
         kernel = reflect(ImageFiltering.Kernel.gaussian((σ,), (σ * 4 * 2 + 1,))),
-        trange = (0, 2000),
-        n_samples = 20_000
     )
 
     num_neurons = size(sol, 1) ÷ 2 # 2 eqs/neuron
     num_pairs   = num_neurons  ÷ 2 # 2 neurons per pair
 
-    ts = sol(LinRange(trange..., n_samples))
-
-    effective_signal = zeros(n_samples, num_pairs)
+    effective_signal = zeros(size(sol, 2), num_pairs)
 
     for nn in 1:num_pairs
         neuron_number = nn - 1 # offset for indexing
@@ -217,8 +213,8 @@ end
 using Makie
 framerate = 1/40
 
-linobs = Node(Point2f0[(0, 0)])
-sc = lines(linobs; limits = Rect(-8, -8, 16, 16), resolution = (1000, 1000), linewidth = 10)
+linobs = Node(signal_to_worm(signal[8000, :]))
+sc = lines(linobs; limits = Rect(-4, -6, 10, 12), resolution = (750, 900), linewidth = 30, scale_plot = false)
 for i in 8000:8800
     linobs[] = signal_to_worm(signal[i, :])
     sleep(framerate)
@@ -333,10 +329,10 @@ lines!(axs[6], vs[12]; color = :red)
 # end
 scene
 
-linobs = Node(Point2f0[(0, 0)])
+linobs = Node(signal_to_worm(signal[8000, :]))
 
-sc = lines(linobs; limits = Rect(-4, -6, 10, 12), resolution = (750, 900), linewidth = 10, scale_plot = false)
+sc = lines(linobs; limits = Rect(-4, -6, 10, 12), resolution = (750, 900), linewidth = 30, scale_plot = false, show_axis = false, color = (:black, 0.2))
 
-record(sc, "worm.mp4", 8_000:12_000; framerate = 60, sleep = false) do i
+record(sc, "worm_0.2.mp4", 8_000:10_000; framerate = 60, sleep = false) do i
     linobs[] = signal_to_worm(signal[i, :])
 end
