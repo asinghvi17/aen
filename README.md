@@ -4,7 +4,7 @@ This is a project concerning the implementation of biomimetic neurons (of the Fi
 
 # Installing dependencies
 
-You will need to have the `Julia` language installed, on version 1.1 or higher.  You can download it at https://julialang.org/downloads/; once you have done that, clone the repo, and run this command in the root directory of the project:
+You will need to have the `Julia` language installed, on version 1.4 or higher.  You can download it at https://julialang.org/downloads/; once you have done that, clone the repo, and run this command in the root directory of the project:
 
 `julia --project=. -e 'using Pkg; Pkg.instantiate()'`
 

@@ -33,13 +33,22 @@ dorsal_ax.xtickalign = 1.0
 linkxaxes!(ventral_ax, dorsal_ax)
 linkyaxes!(ventral_ax, dorsal_ax)
 
-neuron_colors = cgrad(:isolum)[LinRange(0, 1, NUM_NEURONS÷2)]
+neuron_colors = cgrad(:isolum)[LinRange(0, 1, NUM_NEURONS÷2)];
 
 ventral_neuron_list = 1:4:(NUM_NEURONS*2)
 dorsal_neuron_list  = 3:4:(NUM_NEURONS*2)
 
 trange = LinRange(tspan..., 10000)
 timeseries = sol(trange)
+
+signal = eff_signal(timeseries)
+
+animation_range = 1000:0.8:1600
+
+timeobs = Node(0.1)
+
+linobs = @lift signal_to_worm(signal[round(Int, $timeobs * length(trange)/(extrema(trange)[2] - extrema(trange)[1]), RoundUp), :])
+
 
 for neuron in ventral_neuron_list
     lines!(
@@ -63,8 +72,6 @@ end
 
 # display(scene)
 
-timeobs = Node(0.1)
-
 ventral_rect = ventral_ax.targetlimits
 dorsal_rect  = dorsal_ax.targetlimits
 
@@ -81,11 +88,7 @@ dorsal_timeline = @lift Point2f0[
 lines!(ventral_ax, ventral_timeline; linewidth = .7)
 lines!(dorsal_ax,  dorsal_timeline;  linewidth = .7)
 
-signal = eff_signal(timeseries)
 
-animation_range = 1000:0.8:1600
-
-linobs = @lift signal_to_worm(signal[round(Int, $timeobs * length(trange)/(extrema(trange)[2] - extrema(trange)[1]), RoundUp), :])
 
 xlims!(ventral_ax, (1000, 1600))
 

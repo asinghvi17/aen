@@ -10,18 +10,30 @@
 
 NUM_NEURONS = 24
 
-function construct_params(dinh_ind, dinh_val, dgap_ind, dgap_val)
-    es      = fill(0.04,   NUM_NEURONS)
-    bs      = fill(0.47,   NUM_NEURONS)
-    gs      = fill(0.8,    NUM_NEURONS)
-    Js      = fill(0.0,    NUM_NEURONS)
-    Dgaps   = fill(0.05,   NUM_NEURONS)
-    Dinhibs = fill(-0.02,  NUM_NEURONS)
+function construct_params(
+        dinh_ind,
+        dinh_val,
+        dgap_ind,
+        dgap_val;
+        e = 0.04,
+        b = 0.47,
+        g = 0.8,
+        J = 0.0,
+        Dgap = 0.05,
+        Dinhib = -0.02,
+        Dhead = -0.1
+    )
+    es      = fill(e,   NUM_NEURONS)
+    bs      = fill(b,   NUM_NEURONS)
+    gs      = fill(g,    NUM_NEURONS)
+    Js      = fill(J,    NUM_NEURONS)
+    Dgaps   = fill(Dgap,   NUM_NEURONS)
+    Dinhibs = fill(Dinhib,  NUM_NEURONS)
     Kgaps   = fill(1.0,    NUM_NEURONS)
     Kinhibs = fill(1.0,    NUM_NEURONS)
 
     # These have to be special-cased for the head oscillator.
-    Dinhibs[1:2] .= -0.1
+    Dinhibs[1:2] .= Dhead
     # Js[3:end] .= 0.1
 
     # Here, we apply the overrides in the function description.
@@ -32,7 +44,6 @@ function construct_params(dinh_ind, dinh_val, dgap_ind, dgap_val)
     return ps
 end
 
-ps = construct_params(1, 1.0, 1, 1.0)
 # We define the initial conditions
 
 # These are for the head oscillator,
@@ -108,5 +119,5 @@ end
 
 tspan = (0.0, 3000.0)
 
-prob = ODEProblem(CPG!, u0, tspan, ps)
-sol = solve(prob; reltol = 1e-5, abstol = 1e-5)
+prob = ODEProblem(CPG!, u0, tspan, construct_params(1, 1.0, 1, 1.0))
+sol = solve(prob, Tsit5(); reltol = 1e-5, abstol = 1e-5)
