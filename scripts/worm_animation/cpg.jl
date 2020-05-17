@@ -119,7 +119,7 @@ end
 
 tspan = (0.0, 3000.0)
 
-prob = ODEProblem(CPG!, u0, tspan, construct_params(1, 1.0, 1, 1.0; J = .238))
+prob = ODEProblem(CPG!, u0, tspan, construct_params(1, 1.0, 1, 1.0; J = .0))
 sol = solve(prob, Tsit5(); reltol = 1e-5, abstol = 1e-5)
 
 Plots.plot(sol; vars = collect(3:4:NUM_NEURONS))
