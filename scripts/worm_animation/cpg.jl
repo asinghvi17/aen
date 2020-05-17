@@ -50,7 +50,7 @@ end
 u0 = [
     1.0,    # ventral V₀
     -0.667, # ventral W₀
-    1.0,   #  dorsal V₁
+    -1.0,   #  dorsal V₁
     -0.7    #  dorsal W₁
 ]
 
