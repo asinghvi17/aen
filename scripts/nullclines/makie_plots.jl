@@ -1,10 +1,23 @@
 AbstractPlotting.set_theme!(
     font = "CMU Serif Roman", # same font as the document.  Can be changed arbitrarily.
     fontsize = 12,            # 12-point font.
-    titlegap = 5,
-    xgridwidth = 0.5,
-    ygridwidth = 0.5,
-    spinewidth = 0.5
+    LAxis = (
+        xticklabelsize = 10,
+        yticklabelsize = 10,
+        xtickalign = 1,
+        ytickalign = 1,
+        xticksize = 3,
+        xtickwidth = .5,
+        yticksize = 3,
+        ytickwidth = .5,
+        xlabelpadding = 1,
+        ylabelpadding = 1,
+        titlesize = 10,
+        titlegap = 2,
+        xgridwidth = 0.5,
+        ygridwidth = 0.5,
+        spinewidth = 0.5
+    )
 )
 
 const a4_resolution = (595, 842)
@@ -41,7 +54,7 @@ axs = layout[1, 1:2] = [
 hidexdecorations!.(axs); hideydecorations!.(axs)
 setproperty!.(axs, :xlabelvisible, true)
 setproperty!.(axs, :ylabelvisible, true)
-setproperty!.(axs, :spinewidth, true)
+# setproperty!.(axs, :spinewidth, true)
 # setproperty!.(axs, :yspinewidth, true)
 axs[2].yaxisposition = :right
 
@@ -193,3 +206,89 @@ keener_vnull = Point2f0[ # manually expand linear interp
 ########################################
 #                Figure                #
 ########################################
+
+scene, layout = layoutscene(7;
+    # 424 is the text width in the tex document,
+    # which can be found using `\the\textwidth`.
+    resolution = (424, 220),
+    rowgap = 0,
+    colgap = 0
+)
+
+axs = layout[1:2, 1:3] = [LAxis(scene) for row in 1:2, col in 1:3]
+rowgap!(layout, 5)
+
+setproperty!.(axs[1, 2:3], :xlabel, "𝑡 (arb.)")
+setproperty!.(axs[1, 2:3], :ylabel, "𝑣")
+setproperty!.(axs[1, 2:3], :xticklabelsvisible, false)
+setproperty!.(axs[1, 2:3], :yticklabelsvisible, false)
+setproperty!.(axs[2, 2:3], :xlabel, "𝑡")
+setproperty!.(axs[2, 2:3], :ylabel, "𝑉")
+
+save("tmp.pdf", scene)
+
+##############################
+#         Nullclines         #
+##############################
+
+fhn_ax = axs[1, 1]
+fhn_ax.xlabel = "𝑣"
+fhn_ax.ylabel = "𝑤"
+fhn_ax.title = "FitzHugh-Nagumo nullclines"
+
+lines!(fhn_ax, fh_v_null; linewidth = 1, color = wong[1])
+lines!(fhn_ax, fh_w_null; linewidth = 1, color = wong[2])
+save("tmp.pdf", scene)
+
+
+keener_ax = axs[2, 1]
+keener_ax.xlabel = "𝑣"
+keener_ax.ylabel = "𝑤"
+keener_ax.title = "Keener nullclines"
+
+lines!(keener_ax, keener_vnull; linewidth = 1, color = wong[1])
+lines!(keener_ax, fh_w_null; linewidth = 1, color = wong[2])
+
+setproperty!.((fhn_ax, keener_ax), :xticklabelsvisible, false)
+setproperty!.((fhn_ax, keener_ax), :yticklabelsvisible, false)
+save("tmp.pdf", scene)
+
+##############################
+#      Head oscillator       #
+##############################
+
+sim_double_ax  = axs[1, 2]
+anal_double_ax = axs[2, 2]
+
+sim_double_ax.title = "Head oscillator"
+
+
+lines!(sim_double_ax, sim_double_v0; linewidth = 1, color = wong[1])
+lines!(sim_double_ax, sim_double_v1; linewidth = 1, color = wong[2])
+
+lines!(anal_double_ax, anal_double_v0; linewidth = 1, color = wong[1])
+lines!(anal_double_ax, anal_double_v1; linewidth = 1, color = wong[2])
+
+anal_double_ax.xticks[] = MakieLayout.LinearTicks(3)
+
+save("tmp.pdf", scene)
+
+##############################
+#     Descending pathway     #
+##############################
+
+sim_single_ax  = axs[1, 3]
+anal_single_ax = axs[2, 3]
+
+sim_single_ax.title = "Descending pathway"
+
+
+lines!(sim_single_ax, sim_single_v0; linewidth = 1, color = wong[1])
+lines!(sim_single_ax, sim_single_v1; linewidth = 1, color = wong[2])
+
+lines!(anal_single_ax, anal_single_v0; linewidth = 1, color = wong[1])
+lines!(anal_single_ax, anal_single_v1; linewidth = 1, color = wong[2])
+
+anal_single_ax.xticks[] = MakieLayout.LinearTicks(3)
+
+save("tmp.pdf", scene)
