@@ -50,7 +50,7 @@ end
 u0 = [
     1.0,    # ventral V₀
     -0.667, # ventral W₀
-    -1.0,   #  dorsal V₁
+    1.0,   #  dorsal V₁
     -0.7    #  dorsal W₁
 ]
 
@@ -66,7 +66,7 @@ end
 
 # ## Core function
 
-f(v) = #=v - v^3 / 3=# min(max(-2 - v, v), 2 - v)
+f(v) = v - v^3 / 3# min(max(-2 - v, v), 2 - v)
 
 function CPG!(du, u, p, t)
 
@@ -119,8 +119,5 @@ end
 
 tspan = (0.0, 3000.0)
 
-prob = ODEProblem(CPG!, u0, tspan, construct_params(1, 1.0, 1, 1.0; J = .0))
+prob = ODEProblem(CPG!, u0, tspan, construct_params(1, 1.0, 1, 1.0))
 sol = solve(prob, Tsit5(); reltol = 1e-5, abstol = 1e-5)
-
-Plots.plot(sol; vars = collect(3:4:NUM_NEURONS))
-Plots.plot(sol; vars = collect(1:4:NUM_NEURONS))

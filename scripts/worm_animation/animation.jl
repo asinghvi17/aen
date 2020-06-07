@@ -1,4 +1,17 @@
 
+trange = LinRange(tspan..., 10000)
+
+timeseries = sol(trange)
+
+signal = eff_signal(timeseries)
+
+animation_range = 500:0.8:1600
+
+timeobs = Node(0.1)
+
+linobs = @lift signal_to_worm(signal[round(Int, $timeobs * length(trange)/(extrema(trange)[2] - extrema(trange)[1]), RoundUp), :])
+
+
 scene, layout = layoutscene(10; resolution = (round(Int, 750 * 2.5), 900))
 rowgap!(layout, 10)
 colgap!(layout, 2)
@@ -38,17 +51,7 @@ neuron_colors = cgrad(:isolum)[LinRange(0, 1, NUM_NEURONS÷2)];
 ventral_neuron_list = 1:4:(NUM_NEURONS*2)
 dorsal_neuron_list  = 3:4:(NUM_NEURONS*2)
 
-trange = LinRange(tspan..., 10000)
-timeseries = sol(trange)
-
-signal = eff_signal(timeseries)
-
-animation_range = 1000:0.8:1600
-
-timeobs = Node(0.1)
-
-linobs = @lift signal_to_worm(signal[round(Int, $timeobs * length(trange)/(extrema(trange)[2] - extrema(trange)[1]), RoundUp), :])
-
+# timeseries and signal defined in utils
 
 for neuron in ventral_neuron_list
     lines!(
@@ -90,18 +93,18 @@ lines!(dorsal_ax,  dorsal_timeline;  linewidth = .7)
 
 
 
-xlims!(ventral_ax, (1000, 1600))
+xlims!(ventral_ax, extrema(animation_range))
 
 timeobs[] = 1400
 
 lines!(worm_ax, linobs; linewidth = 30)
 display(scene)
-worm_ax.targetlimits[] = Rect2D{Float32}(-2, -6, 14, 12)
+worm_ax.targetlimits[] = Rect2D{Float32}(-7, -10, 14, 20)
 
 timeobs[] = 1410
 
 ##
-record(scene, "worm_dash_12pairs.mp4"; framerate = 30) do io
+record(scene, "worm_dash_12pairs_cb_e.mp4"; framerate = 30) do io
     Juno.@progress for t in animation_range
         timeobs[] = t
         recordframe!(io)

@@ -67,7 +67,11 @@ function signal_to_worm(
     points = Point2f0.(smoothwormx, smoothwormy)
 
 
-    rotation = rotmat(-tightness_of_bend * Δθ[1])
+    rotation = rotmat(-sum(tightness_of_bend .* Δθ))
 
-    return Ref(rotation) .* points
+    rotated = Ref(rotation) .* points
+
+    translation = mean(rotated)
+
+    return rotated .- Ref(translation)
 end
