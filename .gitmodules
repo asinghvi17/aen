@@ -1,3 +1,9 @@
 [submodule "papers/Paper"]
 	path = papers/Paper
 	url = https://github.com/asinghvi17/celegans-model-paper
+[submodule "IPoLS poster"]
+	path = IPoLS poster
+	url = https://github.com/asinghvi17/IPoLS-poster
+[submodule "papers/IPoLS poster"]
+	path = papers/IPoLS poster
+	url = https://github.com/asinghvi17/IPoLS-poster
