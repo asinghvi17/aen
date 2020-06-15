@@ -73,5 +73,5 @@ function signal_to_worm(
 
     translation = mean(rotated)
 
-    return rotated .- Ref(translation)
+    return rotated #.- Ref(translation)
 end
