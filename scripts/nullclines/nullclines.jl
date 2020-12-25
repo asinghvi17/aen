@@ -1,5 +1,6 @@
 using Polynomials
-using MakieLayout, Makie, MakieTeX
+using Makie, AbstractPlotting#, MakieTeX
+# using Makie.AbstractPlotting.MakieLayout
 using CairoMakie
 import AbstractPlotting: xlims!, ylims!, setlims!
 using GeoMakie
@@ -42,7 +43,7 @@ end
 # some conversion functions for poly
 Base.LinRange(interval::AbstractPlotting.IntervalSets.Interval{:closed, :closed, Num}, length::Integer) where Num <: Real = Base.LinRange(interval.left, interval.right, length)
 
-AbstractPlotting.convert_arguments(::AbstractPlotting.PointBased, interval::AbstractPlotting.IntervalSets.Interval{:closed, :closed, Num}, poly::Polynomials.Poly) where Num <: Real = (Point2f0.(Base.LinRange(interval, 500), poly.(Base.LinRange(interval, 500))),)
+AbstractPlotting.convert_arguments(::AbstractPlotting.PointBased, interval::AbstractPlotting.IntervalSets.Interval{:closed, :closed, Num}, poly::Polynomials.Polynomial) where Num <: Real = (Point2f0.(Base.LinRange(interval, 500), poly.(Base.LinRange(interval, 500))),)
 
 # allow setting limits for LAxis
 function AbstractPlotting.setlims!(scene::LAxis, lims::NTuple{2, Real}, dim=1)
@@ -86,18 +87,18 @@ function AbstractPlotting.convert_arguments(::Type{<: Arrows}, x::AbstractVector
     u_out = u.(x, y')
     return (vec(Point2f0.(x, y')), vec(Vec2f0.(getindex.(u_out, 1), getindex.(u_out, 2))))
 end
-
-function MakieLayout.legendelements(plot::Arrows)
-    MakieLayout.LegendElement[ArrowElement(
-        linecolor = plot.linecolor, arrowhead = plot.arrowhead,
-        linestyle = plot.linestyle, arrowcolor = plot.arrowcolor)]
-end
-
-struct ArrowElement <: MakieLayout.LegendElement
-    attributes::Attributes
-end
-
-ArrowElement(;kwargs...) = ArrowElement(Attributes(kwargs...))
+#
+# function MakieLayout.legendelements(plot::Arrows)
+#     MakieLayout.LegendElement[ArrowElement(
+#         linecolor = plot.linecolor, arrowhead = plot.arrowhead,
+#         linestyle = plot.linestyle, arrowcolor = plot.arrowcolor)]
+# end
+#
+# struct ArrowElement <: MakieLayout.LegendElement
+#     attributes::Attributes
+# end
+#
+# ArrowElement(;kwargs...) = ArrowElement(Attributes(kwargs...))
 
 # function MakieLayout.legendsymbol!(scene, element::ArrowElement, bbox, defaultattrs::Attributes)
 #     merge!(element.attributes, defaultattrs)
@@ -129,8 +130,8 @@ ArrowElement(;kwargs...) = ArrowElement(Attributes(kwargs...))
 # v_null_raw = readdlm(joinpath(@__DIR__, "vnull.csv"), ',')
 # w_null_raw = readdlm(joinpath(@__DIR__, "wnull.csv"), ',')
 
-xu_vnull = Polynomials.Poly([0.4134453340693177, -0.014481137741191953, 0.0007940304464515647, 4.5698911401249415e-5, 5.246507347827663e-7])
-xu_wnull = Polynomials.Poly([0.9380140455857346, 0.0030498536445784227, -6.424069411924451e-5, 4.545559542269378e-7])
+xu_vnull = Polynomials.Polynomial([0.4134453340693177, -0.014481137741191953, 0.0007940304464515647, 4.5698911401249415e-5, 5.246507347827663e-7])
+xu_wnull = Polynomials.Polynomial([0.9380140455857346, 0.0030498536445784227, -6.424069411924451e-5, 4.545559542269378e-7])
 
 
 # unit stuff

@@ -99,14 +99,59 @@ timeobs[] = 1400
 
 lines!(worm_ax, linobs; linewidth = 30)
 display(scene)
-worm_ax.targetlimits[] = Rect2D{Float32}(-7, -10, 14, 20)
+worm_ax.targetlimits[] = Rect2D{Float32}(-5, -10, 14, 20)
 
 timeobs[] = 1410
 
 ##
-record(scene, "worm_dash_12pairs_cb_e.mp4"; framerate = 30) do io
+record(scene, "worm_dash_12pairs_omega_v6.mp4"; framerate = 30) do io
     Juno.@progress for t in animation_range
         timeobs[] = t
         recordframe!(io)
     end
 end
+
+
+
+
+# function visualize_cpg_neurons(sol; resolution = (size(sol, 2) ÷ 4 * 250, 500))
+scene, layout = layoutscene(;
+    resolution = resolution
+)
+
+axs = [
+    LAxis(
+        scene;
+        title = "$side$(ModelingToolkit.map_subscripts(num))"
+    )
+    for side in ('V', 'D'), num in 1:6
+]
+
+linkaxes!(axs...)
+hidexdecorations!.(axs[1, 1:6])
+hideydecorations!.(axs[1:2, 2:6])
+
+setproperty!.(axs[1, 1:6], :xgridvisible, true)
+setproperty!.(axs[1:2, 2:6], :ygridvisible, true)
+
+layout[1:2, 1:6] = axs
+
+save("temp1.png", scene; px_per_unit = 3)
+
+# ventral axes
+for (ind, ax) in zip(1:4:NUM_NEURONS, axs[1, 1:6])
+    lines!(ax, sol.t, sol[ind, :])
+end
+
+# dorsal axes
+for (ind, ax) in zip(3:4:NUM_NEURONS, axs[2, 1:6])
+    lines!(ax, sol.t, sol[ind, :])
+end
+
+save("temp2.png", scene; px_per_unit = 3)
+save("temp2.pdf", scene)
+
+xlims!(axs[1], 1000, 1500)
+
+save("temp3.png", scene; px_per_unit = 3)
+save("temp3.pdf", scene)

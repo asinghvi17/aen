@@ -71,7 +71,7 @@ function signal_to_worm(
 
     rotated = Ref(rotation) .* points
 
-    translation = mean(rotated)
+    # translation = mean(rotated)
 
     return rotated #.- Ref(translation)
 end

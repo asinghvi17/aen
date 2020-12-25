@@ -35,7 +35,7 @@ iso_wosc = isoclines(-2..2, -2..2, fh_osc; ind=2)
 iso_vexc = isoclines(-2..2, -2..2, fh_exc; ind=1)
 iso_wexc = isoclines(-2..2, -2..2, fh_exc; ind=2)
 
-scene, layout = layoutscene(
+scene, layout = Makie.AbstractPlotting.layoutscene(
     0;                      # padding
     resolution = (400, 300) # resolution in points
 )
@@ -83,18 +83,18 @@ rowsize!(layout, 2, 80)
 
 # Now comes the shady hacking section.  We add layouted TeX to the legend's internal gridlayout.
 
-leg.grid.content[1].content[1, 2] = LTeX(leg.child,
+leg.grid[1, 2] = LTeX(leg.child,
     raw"dv = \frac{v^3}{3} - v + w + I_{ext} = 0"
 )
 
-leg.grid.content[1].content[2, 2] = LTeX(leg.child,
+leg.grid[2, 2] = LTeX(leg.child,
     raw"dw = e \cdot \left(v- g \cdot w + b\right) = 0"
 )
 
 save("neur_dyn_tmp.pdf", scene)
 save("neur_dyn_tmp.png", scene; px_per_unit = 10)
 
-save(plotsdir("Dynamics/Nullclines/FHN_nullclines/fhn_dynamics_makie.pdf"), scene)
+# save(plotsdir("Dynamics/Nullclines/FHN_nullclines/fhn_dynamics_makie.pdf"), scene)
 
 ################################################################################
 #                           Neuron model nullclines                            #
@@ -162,7 +162,9 @@ leg = layout[2, 1:2] = LLegend(scene,
 rowsize!(layout, 2, 30)
 rowgap!(layout, 0)
 
-save(plotsdir("Dynamics/Nullclines/Neuron model nullclines/nm_nullclines_makie.pdf"), scene)
+save("exp_null_tmp.pdf", scene)
+
+# save(plotsdir("Dynamics/Nullclines/Neuron model nullclines/nm_nullclines_makie.pdf"), scene)
 
 ################################################################################
 #                         Analog-simulation comparison                         #
@@ -234,7 +236,7 @@ save("tmp.pdf", scene)
 fhn_ax = axs[1, 1]
 fhn_ax.xlabel = "𝑣"
 fhn_ax.ylabel = "𝑤"
-fhn_ax.title = "FitzHugh-Nagumo nullclines"
+fhn_ax.title = "FHN nullclines\n "
 
 lines!(fhn_ax, fh_v_null; linewidth = 1, color = wong[1])
 lines!(fhn_ax, fh_w_null; linewidth = 1, color = wong[2])
@@ -260,7 +262,7 @@ save("tmp.pdf", scene)
 sim_double_ax  = axs[1, 2]
 anal_double_ax = axs[2, 2]
 
-sim_double_ax.title = "Head oscillator"
+sim_double_ax.title = "Head oscillator\n(negative coupling)"
 
 
 lines!(sim_double_ax, sim_double_v0; linewidth = 1, color = wong[1])
@@ -280,7 +282,7 @@ save("tmp.pdf", scene)
 sim_single_ax  = axs[1, 3]
 anal_single_ax = axs[2, 3]
 
-sim_single_ax.title = "Descending pathway"
+sim_single_ax.title = "Descending pathway\n(positive coupling)"
 
 
 lines!(sim_single_ax, sim_single_v0; linewidth = 1, color = wong[1])
@@ -292,3 +294,30 @@ lines!(anal_single_ax, anal_single_v1; linewidth = 1, color = wong[2])
 anal_single_ax.xticks[] = MakieLayout.LinearTicks(3)
 
 save("tmp.pdf", scene)
+
+colgap!(layout, 2, 10)
+colgap!(layout, 1, 10)
+rowgap!(layout, 1, 0)
+save("tmp.pdf", scene)
+
+resize!(scene, 424, 250)
+anal_single_ax.title = "Real descending pathway"
+anal_double_ax.title = "Real head oscillator"
+save("tmp.pdf", scene)
+
+labels = [LText(scene, string('A' + j + (i-1)*3); textsize = 15, font = "Noto Sans", halign = :right, valign = :top, padding = (0,7f0,0,0)) for i in 1:2, j in 0:2]
+
+for ind in CartesianIndices(labels)
+    layout[Tuple(ind)..., TopLeft()] = labels[ind]
+end
+
+
+save("tmp.pdf", scene)
+
+setproperty!.(labels, :padding, Ref((0f0, 0f0, 0f0, 0f0)))
+setproperty!.(labels, :halign, :left)
+
+save("tmp.pdf", scene)
+
+
+delete!.(labels)
