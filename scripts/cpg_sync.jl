@@ -146,6 +146,8 @@ function eff_signal(
 
     effective_signal = zeros(size(sol, 2), num_pairs)
 
+    # Essentially, ES_joint(t; i) = ℱ((v_i(t) + \abs(v_i(t)) - d_i(t) - \abs(d_i(t)))/2)
+
     for nn in 1:num_pairs
         neuron_number = nn - 1 # offset for indexing
         effective_signal[:, nn]  = (ts[4*neuron_number + 1, :]  .+ abs.(ts[4*neuron_number + 1, :])) ./ 2

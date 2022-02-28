@@ -22,6 +22,8 @@ AbstractPlotting.set_theme!(
 
 const a4_resolution = (595, 842)
 
+datadir(args...) = joinpath("data", args...)
+
 ################################################################################
 #                           Fitzhugh-Nagumo dynamics                           #
 ################################################################################
@@ -305,9 +307,20 @@ anal_single_ax.title = "Real descending pathway"
 anal_double_ax.title = "Real head oscillator"
 save("tmp.pdf", scene)
 
-labels = [LText(scene, string('A' + j + (i-1)*3); textsize = 15, font = "Noto Sans", halign = :right, valign = :top, padding = (0,7f0,0,0)) for i in 1:2, j in 0:2]
+labels = [
+    LText(
+        scene,
+        string('(', 'a' + j + (i-1)*3, ')');
+        textsize = 10,
+        font = "Fira Sans Bold",
+        halign = :left,
+        padding = (0,0f0,0,0)
+    )
+    for i in 1:2, j in 0:2
+]
 
 for ind in CartesianIndices(labels)
+    # ind cannot be bc'ed so convert to Tuple
     layout[Tuple(ind)..., TopLeft()] = labels[ind]
 end
 
@@ -320,4 +333,4 @@ setproperty!.(labels, :halign, :left)
 save("tmp.pdf", scene)
 
 
-delete!.(labels)
+save("papers/Paper/figures/anal_sim_comp/anal_sim_comp.pdf", scene)
